@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phoning - Sistema com Playlist Estabilizado</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'DotGothic16', sans-serif;
+        }
+
+        body {
+            background-color: #CBEBFA; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .container-principal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* --- ABAS SUPERIORES --- */
+        .tags-container {
+            display: flex;
+            gap: 12px;
+            background-color: #FFFFFF;
+            padding: 10px 16px;
+            border: 1px solid #000000;
+            border-radius: 100px;
+        }
+
+        .tag-botao {
+            border: 1px solid #000000;
+            border-radius: 100px;
+            padding: 6px 20px;
+            font-size: 14px;
+            color: #000000;
+            text-decoration: none;
+            background: linear-gradient(180deg, #FFAEE3 0%, #FFFFFF 100%);
+            cursor: pointer;
+        }
+
+        .tag-botao.branco { background: #FFFFFF; }
+        .tag-botao span { color: #FFAEE3; }
+
+        /* --- MOLDURA DO SISTEMA --- */
+        .janela-chat, .janela-player {
+            background: linear-gradient(0deg, #FFFFFF 0%, #D3FFB0 100%); 
+            border: 1px solid #000000;
+            border-radius: 14px; 
+            width: 480px; 
+            padding: 16px;
+        }
+
+        /* Estilo customizado para o player de vídeo */
+        .janela-player {
+            background: linear-gradient(0deg, #FFFFFF 0%, #FFAEE3 100%);
+        }
+
+        .barra-superior {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .titulo-phoning {
+            background: linear-gradient(180deg, #CBEBFA 0%, #FFFFFF 100%);
+            border: 1px solid #000000;
+            border-radius: 100px;
+            padding: 4px 24px;
+            font-size: 14px;
+        }
+
+        .botoes-janela { display: flex; gap: 6px; }
+
+        .botao-controle {
+            border: 1px solid #000000;
+            background-color: #FFFFFF;
+            border-radius: 4px;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+            transition: opacity 0.2s ease;
+            cursor: pointer;
+        }
+        .botao-controle:hover { opacity: 0.7; }
+
+        /* --- CONTEÚDO DO CHAT --- */
+        .conteudo-chat { display: flex; gap: 16px; }
+        .coluna-esquerda { width: 39%; }
+        .container-foto {
+            background-color: #FFFFFF;
+            border: 1px solid #000000;
+            border-radius: 8px;
+            width: 100%;
+            aspect-ratio: 1 / 1; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px;
+            overflow: hidden;
+        }
+        .foto-avatar { width: 100%; height: 100%; object-fit: contain; }
+        .coluna-direita { width: 61%; display: flex; flex-direction: column; }
+        .timestamp { font-size: 13px; color: #333333; margin-bottom: 4px; }
+        
+        /* --- BLOCO DA BIOGRAFIA EDITÁVEL --- */
+        .container-bio {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .balao-texto {
+            background-color: #FFFFFF;
+            border: 1px solid #000000;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 13px;
+            line-height: 1.4;
+            color: #000000;
+            word-wrap: break-word;
+        }
+
+        .botao-editar-bio {
+            position: absolute;
+            right: 5px;
+            bottom: -10px;
+            background: #FFAEE3;
+            border: 1px solid #000;
+            border-radius: 4px;
+            font-size: 11px;
+            padding: 2px 6px;
+            cursor: pointer;
+            display: none;
+            z-index: 10;
+        }
+
+        .container-bio:hover .botao-editar-bio {
+            display: block;
+        }
+
+        /* --- CONTAINER DE EDIÇÃO --- */
+        .container-edicao-formulario {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 14px;
+        }
+
+        .textarea-bio-edicao {
+            width: 100%;
+            height: 60px;
+            font-size: 13px;
+            border: 1px solid #000;
+            border-radius: 6px;
+            padding: 6px;
+            resize: none;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .botoes-bio-edicao {
+            display: flex;
+            gap: 5px;
+            justify-content: flex-end;
+        }
+
+        .btn-bio-acao {
+            font-size: 11px;
+            padding: 2px 8px;
+            border: 1px solid #000;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-bio-acao.salvar { background-color: #D3FFB0; }
+        .btn-bio-acao.cancelar { background-color: #FFFFFF; }
+
+        /* --- CONTAINER DO VIDEO --- */
+        .container-video-embed {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* Proporção 16:9 */
+            height: 0;
+            border: 1px solid #000000;
+            border-radius: 6px;
+            overflow: hidden;
+            background-color: #000;
+            margin-bottom: 10px;
+        }
+
+        .container-video-embed iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- MENU DE MÚSICAS (PLAYLIST) --- */
+        .menu-playlist {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            background-color: #FFFFFF;
+            border: 1px solid #000000;
+            border-radius: 6px;
+            padding: 8px;
+        }
+
+        .musica-item {
+            background-color: #f1f1f1;
+            border: 1px solid #000000;
+            border-radius: 4px;
+            padding: 4px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            flex-grow: 1;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+
+        .musica-item:hover, .musica-item.ativa {
+            background-color: #CBEBFA;
+            font-weight: bold;
+        }
+
+        /* --- FORMULÁRIOS --- */
+        .formulario-autenticacao {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 10px 5px;
+        }
+        .titulo-auth { font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 8px; }
+        .campo-grupo { display: flex; flex-direction: column; gap: 4px; }
+        .campo-grupo label { font-size: 12px; font-weight: bold; }
+        .campo-grupo input {
+            border: 1px solid #000000;
+            border-radius: 6px;
+            padding: 8px;
+            font-size: 13px;
+            outline: none;
+            background-color: #FFFFFF;
+        }
+        .botoes-auth-container { display: flex; gap: 10px; margin-top: 10px; }
+        .botao-auth {
+            border: 1px solid #000000;
+            border-radius: 100px;
+            padding: 8px 16px;
+            font-size: 13px;
+            cursor: pointer;
+            text-align: center;
+            flex: 1;
+        }
+        .botao-auth.principal { background: linear-gradient(180deg, #FFAEE3 0%, #FFFFFF 100%); }
+        
+        .texto-alternar {
+            font-size: 12px;
+            text-align: center;
+            margin-top: 10px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .aviso-erro { color: #ff0000; font-size: 12px; text-align: center; font-weight: bold; }
+
+        .escondido { display: none !important; }
+
+        /* --- PAINEL DA GALERIA --- */
+        .janela-galeria {
+            background-color: #FFFFFF;
+            border: 1px solid #000000;
+            border-radius: 12px;
+            width: 480px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .titulo-galeria { font-size: 14px; font-weight: bold; text-transform: uppercase; }
+        .botoes-galeria { display: flex; gap: 8px; }
+        .upload-input { display: none; }
+        .upload-label {
+            background: linear-gradient(180deg, #FFAEE3 0%, #FFFFFF 100%);
+            border: 1px solid #000000;
+            border-radius: 6px;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            cursor: pointer;
+            flex: 2;
+        }
+        .botao-limpar { background-color: #fff; border: 1px solid #000; border-radius: 6px; padding: 8px; font-size: 12px; cursor: pointer; flex: 1; }
+        .botao-limpar:hover { background-color: #ffe0e0; }
+        .grade-fotos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-height: 150px; overflow-y: auto; padding: 4px; border: 1px dashed #000; border-radius: 6px; min-height: 70px; }
+        .item-foto { border: 1px solid #000000; border-radius: 6px; aspect-ratio: 1 / 1; cursor: pointer; overflow: hidden; background-color: #f9f9f9; }
+        .item-foto img { width: 100%; height: 100%; object-fit: cover; }
+    </style>
+</head>
+<body>
+
+    <div class="container-principal">
+        
+        <div class="tags-container" id="abasSuperiores" style="display: none;">
+            <div class="tag-botao" id="btnMvPlayer">NewHairNewTee</div>
+            <a href="#" class="tag-botao branco"><span>ツ</span> 2006</a>
+            <a href="#" class="tag-botao branco" id="btnPerfilHaerin">👤 Haerin (Sair)</a>
+        </div>
+
+        <div class="janela-chat">
+            <div class="barra-superior">
+                <span class="titulo-phoning">@ phoning</span>
+                <div class="botoes-janela">
+                    <span class="botao-controle">✕</span>
+                    <span class="botao-controle">─</span>
+                    <span class="botao-controle">⬜</span>
+                </div>
+            </div>
+
+            <div class="formulario-autenticacao" id="telaCadastro">
+                <div class="titulo-auth">✨ Create Account ✨</div>
+                <div class="campo-grupo">
+                    <label>Username</label>
+                    <input type="text" id="cadUser" placeholder="Choose a username...">
+                </div>
+                <div class="campo-grupo">
+                    <label>Password</label>
+                    <input type="password" id="cadPass" placeholder="Create a password...">
+                </div>
+                <div class="botoes-auth-container">
+                    <button class="botao-auth principal" id="btnRegistrar">Sign Up</button>
+                </div>
+                <div class="texto-alternar" id="irParaLogin">Already have an account? Log In</div>
+            </div>
+
+            <div class="formulario-autenticacao escondido" id="telaLogin">
+                <div class="titulo-auth">🔐 Log In 🔐</div>
+                <div id="msgErro" class="aviso-erro"></div>
+                <div class="campo-grupo">
+                    <label>Username</label>
+                    <input type="text" id="loginUser" placeholder="Enter your username...">
+                </div>
+                <div class="campo-grupo">
+                    <label>Password</label>
+                    <input type="password" id="loginPass" placeholder="Enter your password...">
+                </div>
+                <div class="botoes-auth-container">
+                    <button class="botao-auth principal" id="btnLogar">Sign In</button>
+                </div>
+                <div class="texto-alternar" id="irParaCadastro">Don't have an account? Sign Up</div>
+            </div>
+
+            <div class="conteudo-chat escondido" id="telaChat">
+                <div class="coluna-esquerda">
+                    <div class="container-foto">
+                        <img id="fotoPerfil" src="boneca.png" alt="Avatar" class="foto-avatar">
+                    </div>
+                </div>
+                <div class="coluna-direita">
+                    <div class="timestamp" id="tempo-envio">Today at --:-- pm</div>
+                    
+                    <div class="container-bio" id="blocoVisualizacaoBio">
+                        <div class="balao-texto" id="textoBio">
+                            You know me like no other<br>
+                            디 표현하지 않아도
+                        </div>
+                        <button class="botao-editar-bio" id="btnEditarBio">✏️ Editar Bio</button>
+                    </div>
+
+                    <div class="container-edicao-formulario escondido" id="blocoEdicaoBio">
+                        <textarea class="textarea-bio-edicao" id="campoEdicaoBio"></textarea>
+                        <div class="botoes-bio-edicao">
+                            <button class="btn-bio-acao cancelar" id="btnCancelarBio">Cancel</button>
+                            <button class="btn-bio-acao salvar" id="btnSalvarBio">Save</button>
+                        </div>
+                    </div>
+
+                    <div class="timestamp" id="tempo-atual">Today at --:-- pm</div>
+                    <div class="balao-texto">
+                        Acesso liberado! Você está logado no ambiente seguro do Phoning.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="janela-player escondido" id="janelaMvPlayer">
+            <div class="barra-superior">
+                <span class="titulo-phoning">📺 NewJeans Player</span>
+                <div class="botoes-janela">
+                    <span class="botao-controle" id="fecharPlayer">✕</span>
+                    <span class="botao-controle">─</span>
+                    <span class="botao-controle">⬜</span>
+                </div>
+            </div>
+            
+            <div class="container-video-embed">
+                <iframe id="videoIframe" src="https://player.vimeo.com/video/847053538" title="NewJeans Player" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+            </div>
+
+            <div class="menu-playlist">
+                <div class="musica-item ativa" onclick="mudarMusica('https://player.vimeo.com/video/847053538', this)">Cool With You</div>
+                <div class="musica-item" onclick="mudarMusica('https://player.vimeo.com/video/847039530', this)">New Jeans</div>
+                <div class="musica-item" onclick="mudarMusica('https://player.vimeo.com/video/847065360', this)">Get Up</div>
+                <div class="musica-item" onclick="mudarMusica('https://player.vimeo.com/video/782357731', this)">Ditto</div>
+                <div class="musica-item" onclick="mudarMusica('https://player.vimeo.com/video/843132049', this)">ETA</div>
+            </div>
+        </div>
+
+        <div class="janela-galeria escondido" id="painelGaleria">
+            <div class="titulo-galeria">📁 Minhas Fotos de Perfil</div>
+            <div class="botoes-galeria">
+                <label for="inputArquivo" class="upload-label">➕ Adicionar foto</label>
+                <input type="file" id="inputArquivo" class="upload-input" accept="image/*">
+                <button id="btnLimpar" class="botao-limpar">🗑️ Limpar tudo</button>
+            </div>
+            <div class="grade-fotos" id="gradeFotos"></div>
+        </div>
+
+    </div>
+
+    <script>
+        let usuarioLogadoAtual = "";
+        const bioPadrao = "You know me like no other\n디 표현하지 않아도";
+
+        // --- 🎵 FUNÇÃO PARA MUDAR DE MÚSICA NA PLAYLIST ---
+        function mudarMusica(url, elemento) {
+            const iframe = document.getElementById('videoIframe');
+            iframe.src = url;
+            
+            // Remove o destaque dos outros botões e coloca no atual
+            document.querySelectorAll('.musica-item').forEach(btn => btn.classList.remove('ativa'));
+            elemento.classList.add('ativa');
+        }
+
+        // --- 🕰️ RELÓGIO ---
+        function formatarHora() {
+            const agora = new Date();
+            let horas = agora.getHours();
+            let minutos = agora.getMinutes();
+            const ampm = horas >= 12 ? 'pm' : 'am';
+            horas = horas % 12; 
+            horas = horas ? horas : 12; 
+            horas = horas < 10 ? '0' + horas : horas;
+            minutos = minutos < 10 ? '0' + minutes : minutos;
+            return `Today at ${horas}:${minutos} ${ampm}`;
+        }
+        function iniciarRelogios() {
+            const c1 = document.getElementById('tempo-envio');
+            const c2 = document.getElementById('tempo-atual');
+            if (c1) c1.innerText = formatarHora();
+            if (c2) c2.innerText = formatarHora();
+        }
+        iniciarRelogios();
+        setInterval(iniciarRelogios, 1000);
+
+        // --- NAVEGAÇÃO DE TELAS ---
+        const telaCadastro = document.getElementById('telaCadastro');
+        const telaLogin = document.getElementById('telaLogin');
+        const telaChat = document.getElementById('telaChat');
+        const painelGaleria = document.getElementById('painelGaleria');
+        const abasSuperiores = document.getElementById('abasSuperiores');
+        const janelaMvPlayer = document.getElementById('janelaMvPlayer');
+        const videoIframe = document.getElementById('videoIframe');
+
+        document.getElementById('irParaLogin').addEventListener('click', () => { 
+            telaCadastro.classList.add('escondido'); 
+            telaLogin.classList.remove('escondido'); 
+        });
+        document.getElementById('irParaCadastro').addEventListener('click', () => { 
+            telaLogin.classList.add('escondido'); 
+            telaCadastro.classList.remove('escondido'); 
+        });
+
+        // Controle para abrir e fechar o Player de Vídeo
+        document.getElementById('btnMvPlayer').addEventListener('click', () => {
+            janelaMvPlayer.classList.remove('escondido');
+        });
+        document.getElementById('fecharPlayer').addEventListener('click', () => {
+            janelaMvPlayer.classList.add('escondido');
+            videoIframe.src = videoIframe.src;
+        });
+
+        // --- BANCO DE DADOS (LOCALSTORAGE) ---
+        const btnRegistrar = document.getElementById('btnRegistrar');
+        const btnLogar = document.getElementById('btnLogar');
+        const msgErro = document.getElementById('msgErro');
+        const btnPerfilHaerin = document.getElementById('btnPerfilHaerin');
+
+        btnRegistrar.addEventListener('click', () => {
+            const user = document.getElementById('cadUser').value.trim();
+            const pass = document.getElementById('cadPass').value.trim();
+
+            if (!user || !pass) { alert('Preencha todos os campos!'); return; }
+            let bancoUsuarios = JSON.parse(localStorage.getItem('bancoUsuarios')) || {};
+
+            if (bancoUsuarios[user]) { alert('Esse usuário já existe!'); return; }
+
+            bancoUsuarios[user] = { 
+                password: pass, 
+                tentativas: 0, 
+                bloqueado: false, 
+                bio: bioPadrao 
+            };
+            localStorage.setItem('bancoUsuarios', JSON.stringify(bancoUsuarios));
+            
+            alert('Cadastro efetuado com sucesso!');
+            telaCadastro.classList.add('escondido');
+            telaLogin.classList.remove('escondido');
+        });
+
+        btnLogar.addEventListener('click', () => {
+            const user = document.getElementById('loginUser').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+            msgErro.innerText = "";
+
+            let bancoUsuarios = JSON.parse(localStorage.getItem('bancoUsuarios')) || {};
+
+            if (!bancoUsuarios[user]) { msgErro.innerText = "Usuário não encontrado!"; return; }
+            if (bancoUsuarios[user].bloqueado) { msgErro.innerText = "CONTA BLOQUEADA! Excedeu as 5 tentativas."; return; }
+
+            if (bancoUsuarios[user].password === pass) {
+                bancoUsuarios[user].tentativas = 0;
+                localStorage.setItem('bancoUsuarios', JSON.stringify(bancoUsuarios));
+                
+                usuarioLogadoAtual = user;
+
+                if (!bancoUsuarios[user].bio) {
+                    bancoUsuarios[user].bio = bioPadrao;
+                    localStorage.setItem('bancoUsuarios', JSON.stringify(bancoUsuarios));
+                }
+
+                document.getElementById('textoBio').innerHTML = bancoUsuarios[user].bio.replace(/\n/g, '<br>');
+
+                telaLogin.classList.add('escondido');
+                telaChat.classList.remove('escondido');
+                painelGaleria.classList.remove('escondido');
+                abasSuperiores.style.display = 'flex';
+                iniciarRelogios();
+            } else {
+                bancoUsuarios[user].tentativas += 1;
+                const restavam = 5 - bancoUsuarios[user].tentativas;
+
+                if (bancoUsuarios[user].tentativas >= 5) {
+                    bancoUsuarios[user].bloqueado = true;
+                    msgErro.innerText = "CONTA BLOQUEADA! Você errou a senha 5 vezes.";
+                } else {
+                    msgErro.innerText = `Senha incorreta! Restam ${restavam} tentativas.`;
+                }
+                localStorage.setItem('bancoUsuarios', JSON.stringify(bancoUsuarios));
+            }
+        });
+
+        btnPerfilHaerin.addEventListener('click', (e) => {
+            e.preventDefault();
+            usuarioLogadoAtual = "";
+            telaChat.classList.add('escondido');
+            painelGaleria.classList.add('escondido');
+            janelaMvPlayer.classList.add('escondido');
+            abasSuperiores.style.display = 'none';
+            document.getElementById('loginUser').value = "";
+            document.getElementById('loginPass').value = "";
+            telaLogin.classList.remove('escondido');
+        });
+
+        // --- EDIÇÃO DE BIO ---
+        const blocoVisualizacaoBio = document.getElementById('blocoVisualizacaoBio');
+        const blocoEdicaoBio = document.getElementById('blocoEdicaoBio');
+        const campoEdicaoBio = document.getElementById('campoEdicaoBio');
+        const textoBio = document.getElementById('textoBio');
+
+        document.getElementById('btnEditarBio').addEventListener('click', () => {
+            let bancoUsuarios = JSON.parse(localStorage.getItem('bancoUsuarios')) || {};
+            campoEdicaoBio.value = bancoUsuarios[usuarioLogadoAtual].bio || bioPadrao;
+            blocoVisualizacaoBio.classList.add('escondido');
+            blocoEdicaoBio.classList.remove('escondido');
+        });
+
+        document.getElementById('btnCancelarBio').addEventListener('click', () => {
+            blocoEdicaoBio.classList.add('escondido');
+            blocoVisualizacaoBio.classList.remove('escondido');
+        });
+
+        document.getElementById('btnSalvarBio').addEventListener('click', () => {
+            let bancoUsuarios = JSON.parse(localStorage.getItem('bancoUsuarios')) || {};
+            const novaBioTexto = campoEdicaoBio.value;
+            
+            bancoUsuarios[usuarioLogadoAtual].bio = novaBioTexto;
+            localStorage.setItem('bancoUsuarios', JSON.stringify(bancoUsuarios));
+
+            textoBio.innerHTML = novaBioTexto.replace(/\n/g, '<br>');
+            blocoEdicaoBio.classList.add('escondido');
+            blocoVisualizacaoBio.classList.remove('escondido');
+        });
+
+        // --- GALERIA ---
+        const inputArquivo = document.getElementById('inputArquivo');
+        const gradeFotos = document.getElementById('gradeFotos');
+        const fotoPerfil = document.getElementById('fotoPerfil');
+        let listaDeFotos = JSON.parse(localStorage.getItem('galeriaFotos')) || [];
+        fotoPerfil.src = localStorage.getItem('fotoPerfilAtual') || 'boneca.png';
+
+        function atualizarGaleria() {
+            gradeFotos.innerHTML = '';
+            listaDeFotos.forEach((f) => {
+                const item = document.createElement('div'); item.classList.add('item-foto');
+                item.innerHTML = `<img src="${f}">`;
+                item.addEventListener('click', () => { fotoPerfil.src = f; localStorage.setItem('fotoPerfilAtual', f); });
+                gradeFotos.appendChild(item);
+            });
+        }
+        inputArquivo.addEventListener('change', (e) => {
+            const arquivo = e.target.files[0];
+            if (arquivo) {
+                const leitor = new FileReader(); leitor.readAsDataURL(arquivo);
+                leitor.onload = (ev) => {
+                    listaDeFotos.push(ev.target.result);
+                    localStorage.setItem('galeriaFotos', JSON.stringify(listaDeFotos));
+                    atualizarGaleria();
+                };
+            }
+        });
+        document.getElementById('btnLimpar').addEventListener('click', () => {
+            localStorage.removeItem('galeriaFotos'); listaDeFotos = []; fotoPerfil.src = 'boneca.png'; atualizarGaleria();
+        });
+        atualizarGaleria();
+    </script>
+</body>
+</html>
