@@ -8,9 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
 
     <style>
-        /* ==========================================================================
-           1. CONFIGURAÇÕES GERAIS E RESETS
-           ========================================================================== */
+  
         * {
             box-sizing: border-box;
             margin: 0;
@@ -36,7 +34,7 @@
             gap: 16px;
         }
 
-        /* --- ABAS SUPERIORES (SÓ APARECEM APÓS LOGAR) --- */
+        /* --- ABAS SUPERIORES --- */
         .tags-container {
             display: flex;
             gap: 12px;
@@ -65,9 +63,6 @@
             color: #FFAEE3;
         }
 
-        /* ==========================================================================
-           2. MOLDURAS DAS JANELAS (ESTILO PHONING)
-           ========================================================================== */
         .janela-chat, .janela-player, .janela-galeria {
             background: linear-gradient(0deg, #FFFFFF 0%, #D3FFB0 100%);
             border: 1px solid #000000;
@@ -121,9 +116,6 @@
             cursor: pointer;
         }
 
-        /* ==========================================================================
-           3. FORMULÁRIOS DE CADASTRO E LOGIN
-           ========================================================================== */
         .formulario-autenticacao {
             display: flex;
             flex-direction: column;
@@ -193,9 +185,6 @@
             font-weight: bold;
         }
 
-        /* ==========================================================================
-           4. SEÇÃO DO CHAT E PERFIL
-           ========================================================================== */
         .conteudo-chat {
             display: flex;
             gap: 16px;
@@ -305,9 +294,6 @@
         .btn-bio-acao.salvar { background-color: #D3FFB0; }
         .btn-bio-acao.cancelar { background-color: #FFFFFF; }
 
-        /* ==========================================================================
-           5. PLAYER DE VÍDEO (YOUTUBE) E GALERIA
-           ========================================================================== */
         .container-video-embed {
             position: relative;
             width: 100%;
@@ -380,7 +366,36 @@
             object-fit: cover;
         }
 
-        /* --- CLASSE UTILITÁRIA PARA OCULTAR COMPONENTES --- */
+        /* RECURSOS AUXILIARES */
+        .titulo-galeria {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .botoes-galeria {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        .upload-label {
+            background: #f1f1f1;
+            border: 1px solid #000;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .upload-input {
+            display: none;
+        }
+        .botao-limpar {
+            background: #FFF;
+            border: 1px solid #000;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
         .escondido {
             display: none !important;
         }
@@ -392,13 +407,13 @@
 
         <div class="tags-container" id="abasSuperiores" style="display: none;">
             <div class="tag-botao" id="btnMvPlayer">NewHairNewTee</div>
-            <div class="tag-botao branco"><span>ツ</span> 2006</div>
-            <div class="tag-botao branco" id="btnPerfilSair">👤 Perfil (Sair)</div>
+            <div class="tag-botao branco" id="tagDataPerfil"><span>ツ</span> 2006</div>
+            <div class="tag-botao branco" id="btnPerfilSair">👤 Sair</div>
         </div>
 
         <div class="janela-chat">
             <div class="barra-superior">
-                <span class="titulo-phoning" id="tituloJanela">@ tokking</span>
+                <span class="titulo-phoning">@ tokking</span>
                 <div class="botoes-janela">
                     <span class="botao-controle">✕</span>
                     <span class="botao-controle">─</span>
@@ -408,6 +423,7 @@
             
             <div class="formulario-autenticacao" id="telaCadastro">
                 <div class="titulo-auth">✨ Create Account ✨</div>
+                <div id="msgErroCadastro" class="aviso-erro"></div>
                 <div class="campo-grupo">
                     <label>Username</label>
                     <input type="text" id="cadUser" placeholder="Choose a username...">
@@ -424,7 +440,7 @@
 
             <div class="formulario-autenticacao escondido" id="telaLogin">
                 <div class="titulo-auth">🔐 Log In 🔐</div>
-                <div id="msgErro" class="aviso-erro"></div>
+                <div id="msgErroLogin" class="aviso-erro"></div>
                 <div class="campo-grupo">
                     <label>Username</label>
                     <input type="text" id="loginUser" placeholder="Enter your username...">
@@ -449,7 +465,7 @@
                     <div class="timestamp" id="tempo-envio">Today at --:-- pm</div>
                     
                     <div class="container-bio" id="blocoVisualizacaoBio">
-                        <div class="balao-texto" id="textoBio">You know me like no other<br>디 표현하지 않아 de Cenário</div>
+                        <div class="balao-texto" id="textoBio">Edite sua bio aqui!<br>Adicione algo fofo :3</div>
                         <button class="botao-editar-bio" id="btnEditarBio">✏️ Editar Bio</button>
                     </div>
 
@@ -462,7 +478,7 @@
                     </div>
 
                     <div class="timestamp" id="tempo-atual">Today at --:-- pm</div>
-                    <div class="balao-texto">Acesso liberado! Você está logado no ambiente seguro do Tokking.</div>
+                    <div class="balao-texto">Acesso liberado! Você está conectado com sucesso no ambiente seguro.</div>
                 </div>
             </div>
         </div>
@@ -477,19 +493,19 @@
                 </div>
             </div>
             <div class="container-video-embed">
-                <iframe id="videoIframe" src="https://www.youtube.com/embed/DdPe1BjS_UQ" title="NewJeans Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                <iframe id="videoIframe" src="https://www.youtube.com/embed/uiz7EsMPsuw" title="NewJeans Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
             <div class="menu-playlist">
-                <div class="musica-item ativa" onclick="mudarMusica('https://www.youtube.com/embed/DdPe1BjS_UQ', this)">Attention</div>
+                <div class="musica-item" onclick="mudarMusica('https://www.youtube.com/embed/js1CtxSY38I', this)">Attention</div>
                 <div class="musica-item" onclick="mudarMusica('https://www.youtube.com/embed/S4UEJePR0UE', this)">Hype Boy</div>
                 <div class="musica-item" onclick="mudarMusica('https://www.youtube.com/embed/VOmIplFAGeg', this)">Cookie</div>
                 <div class="musica-item" onclick="mudarMusica('https://www.youtube.com/embed/pSUydWEqKwE', this)">Ditto</div>
                 <div class="musica-item" onclick="mudarMusica('https://www.youtube.com/embed/kcelgrGY1h8', this)">New Jeans</div>
                 <div class="musica-item" onclick="mudarMusica('https://www.youtube.com/embed/jOTfBlKSQYY', this)">ETA</div>
                 <div class="musica-item" onclick="mudarMusica('https://www.youtube.com/embed/zsYSSVoQnP4', this)">Cool With You</div>
-                <div class="musica-item" onclick="mudarMusica('https://www.youtube.com/embed/AjMfj8c-8yY', this)">Super Shy</div>
-                <div class="musica-item" onclick="mudarMusica('https://www.youtube.com/embed/5lrNblMfqmU', this)">ASAP</div>
-                <div class="musica-item" onclick="mudarMusica('https://www.youtube.com/embed/uiz7EsMPsuw', this)">GODS (Live Worlds)</div>
+                <div class="musica-item" onclick="mudarMusica('https://www.youtube.com/embed/ArmDp-zijuc', this)">Super Shy</div>
+                <div class="musica-item" onclick="mudarMusica('https://www.youtube.com/embed/dJdqn5v4Dkw', this)">ASAP</div>
+                <div class="musica-item ativa" onclick="mudarMusica('https://www.youtube.com/embed/uiz7EsMPsuw', this)">GODS (Worlds Live)</div>
             </div>
         </div>
 
@@ -507,7 +523,9 @@
 
     <script>
         let usuarioLogadoAtual = "";
-        const bioPadrao = "You know me like no other\n디 표현하지 않아 de Cenário";
+        
+        // Bio padrão 
+        const bioPadrao = "Edite sua bio aqui!\nAdicione algo fofo :3";
 
         const telaCadastro = document.getElementById('telaCadastro');
         const telaLogin = document.getElementById('telaLogin');
@@ -516,99 +534,97 @@
         const abasSuperiores = document.getElementById('abasSuperiores');
         const janelaMvPlayer = document.getElementById('janelaMvPlayer');
         const videoIframe = document.getElementById('videoIframe');
-        const msgErro = document.getElementById('msgErro');
+        const msgErroLogin = document.getElementById('msgErroLogin');
+        const msgErroCadastro = document.getElementById('msgErroCadastro');
 
-        // Alternar telas iniciais
+        // Alternar entre telas
         document.getElementById('irParaLogin').addEventListener('click', () => {
             telaCadastro.classList.add('escondido');
             telaLogin.classList.remove('escondido');
+            msgErroCadastro.innerText = "";
         });
 
         document.getElementById('irParaCadastro').addEventListener('click', () => {
             telaLogin.classList.add('escondido');
             telaCadastro.classList.remove('escondido');
+            msgErroLogin.innerText = "";
         });
 
-        // Controle de Exibição do Player
-        document.getElementById('btnMvPlayer').addEventListener('click', () => {
-            janelaMvPlayer.classList.toggle('escondido');
-        });
-        document.getElementById('fecharPlayer').addEventListener('click', () => {
-            janelaMvPlayer.classList.add('escondido');
-            videoIframe.src = videoIframe.src; 
-        });
-
-        // Troca de música da Playlist
-        function mudarMusica(url, elemento) {
-            videoIframe.src = url;
-            document.querySelectorAll('.musica-item').forEach(btn => btn.classList.remove('ativa'));
-            elemento.classList.add('ativa');
-        }
-
-        // Relógio AM/PM estável
+        // Relógio Dinâmico
         function formatarHora() {
             const agora = new Date();
-            let horas = agora.getHours(), minutos = agora.getMinutes();
+            let horas = agora.getHours();
+            let minutos = agora.getMinutes();
             const ampm = horas >= 12 ? 'pm' : 'am';
             horas = horas % 12 || 12;
             let minFormatado = minutos < 10 ? '0' + minutos : minutos;
             return `Today at ${horas < 10 ? '0' + horas : horas}:${minFormatado} ${ampm}`;
         }
+        
         function iniciarRelogios() {
-            if(document.getElementById('tempo-envio')) document.getElementById('tempo-envio').innerText = formatarHora();
-            if(document.getElementById('tempo-atual')) document.getElementById('tempo-atual').innerText = formatarHora();
+            const elEnvio = document.getElementById('tempo-envio');
+            const elAtual = document.getElementById('tempo-atual');
+            if(elEnvio) elEnvio.innerText = formatarHora();
+            if(elAtual) elAtual.innerText = formatarHora();
         }
-        iniciarRelogios(); setInterval(iniciarRelogios, 1000);
+        iniciarRelogios(); 
+        setInterval(iniciarRelogios, 1000);
 
-        // --- SISTEMA DE CADASTRO ---
+        // --- CADASTRO REAL ---
         document.getElementById('btnRegistrar').addEventListener('click', () => {
             const user = document.getElementById('cadUser').value.trim();
             const pass = document.getElementById('cadPass').value.trim();
+            msgErroCadastro.innerText = "";
 
-            if (!user || !pass) { alert('Preencha todos os campos!'); return; }
+            if (!user || !pass) { msgErroCadastro.innerText = "Preencha todos os campos!"; return; }
 
             let bancoUsuarios = JSON.parse(localStorage.getItem('bancoUsuarios')) || {};
-            if (bancoUsuarios[user]) { alert('Esse usuário já existe!'); return; }
+            if (bancoUsuarios[user]) { msgErroCadastro.innerText = "Esse usuário já existe!"; return; }
 
             bancoUsuarios[user] = { password: pass, bio: bioPadrao };
             localStorage.setItem('bancoUsuarios', JSON.stringify(bancoUsuarios));
             
-            alert('Cadastro efetuado com sucesso!');
+            alert('Conta criada com sucesso! Faça o login agora.');
             telaCadastro.classList.add('escondido');
             telaLogin.classList.remove('escondido');
         });
 
-        // --- SISTEMA DE LOGIN ---
+        // --- LOGIN REAL ---
         document.getElementById('btnLogar').addEventListener('click', () => {
             const user = document.getElementById('loginUser').value.trim();
             const pass = document.getElementById('loginPass').value.trim();
-            msgErro.innerText = "";
+            msgErroLogin.innerText = "";
 
             let bancoUsuarios = JSON.parse(localStorage.getItem('bancoUsuarios')) || {};
 
-            if (!bancoUsuarios[user]) { msgErro.innerText = "Usuário não encontrado!"; return; }
+            if (!bancoUsuarios[user]) { msgErroLogin.innerText = "Usuário não encontrado!"; return; }
 
             if (bancoUsuarios[user].password === pass) {
                 usuarioLogadoAtual = user;
                 
-                document.getElementById('textoBio').innerHTML = (bancoUsuarios[user].bio || bioPadrao).replace(/\n/g, '<br>');
+                // Força a atualização caso a bio salva seja a antiga do NewJeans ("You know me like no other")
+                if (!bancoUsuarios[user].bio || bancoUsuarios[user].bio.includes("You know me like no other")) {
+                    bancoUsuarios[user].bio = bioPadrao;
+                    localStorage.setItem('bancoUsuarios', JSON.stringify(bancoUsuarios));
+                }
+                
+                document.getElementById('textoBio').innerHTML = bancoUsuarios[user].bio.replace(/\n/g, '<br>');
                 
                 telaLogin.classList.add('escondido');
                 telaChat.classList.remove('escondido');
                 painelGaleria.classList.remove('escondido');
+                janelaMvPlayer.classList.remove('escondido'); 
                 abasSuperiores.style.display = 'flex';
-                document.getElementById('btnPerfilSair').innerText = `👤 ${user} (Sair)`;
+                
                 iniciarRelogios();
             } else {
-                msgErro.innerText = "Senha incorreta!";
+                msgErroLogin.innerText = "Senha incorreta!";
             }
         });
 
-        // --- SISTEMA DE LOGOUT ---
-        document.getElementById('btnPerfilSair').addEventListener('click', (e) => {
-            e.preventDefault();
+        // --- LOGOUT ---
+        document.getElementById('btnPerfilSair').addEventListener('click', () => {
             usuarioLogadoAtual = "";
-            
             telaChat.classList.add('escondido');
             painelGaleria.classList.add('escondido');
             janelaMvPlayer.classList.add('escondido');
@@ -619,30 +635,91 @@
             telaLogin.classList.remove('escondido');
         });
 
+        // Controle do Player
+        document.getElementById('btnMvPlayer').addEventListener('click', () => {
+            janelaMvPlayer.classList.toggle('escondido');
+        });
+        document.getElementById('fecharPlayer').addEventListener('click', () => {
+            janelaMvPlayer.classList.add('escondido');
+            videoIframe.src = videoIframe.src; 
+        });
+
+        // Troca de música
+        function mudarMusica(url, elemento) {
+            videoIframe.src = url;
+            document.querySelectorAll('.musica-item').forEach(btn => btn.classList.remove('ativa'));
+            elemento.classList.add('ativa');
+        }
+
         // Edição de Bio
-        const blocoVis = document.getElementById('blocoVisualizacaoBio'), blocoEdi = document.getElementById('blocoEdicaoBio'), campoEdi = document.getElementById('campoEdicaoBio'), txtBio = document.getElementById('textoBio');
-        document.getElementById('btnEditarBio').addEventListener('click', () => { if(!usuarioLogadoAtual) return; let bd = JSON.parse(localStorage.getItem('bancoUsuarios')) || {}; campoEdi.value = bd[usuarioLogadoAtual].bio || bioPadrao; blocoVis.classList.add('escondido'); blocoEdi.classList.remove('escondido'); });
-        document.getElementById('btnCancelarBio').addEventListener('click', () => { blocoEdi.classList.add('escondido'); blocoVis.classList.remove('escondido'); });
-        document.getElementById('btnSalvarBio').addEventListener('click', () => { if(!usuarioLogadoAtual) return; let bd = JSON.parse(localStorage.getItem('bancoUsuarios')) || {}; const txt = campoEdi.value; bd[usuarioLogadoAtual].bio = txt; localStorage.setItem('bancoUsuarios', JSON.stringify(bd)); txtBio.innerHTML = txt.replace(/\n/g, '<br>'); blocoEdi.classList.add('escondido'); blocoVis.classList.remove('escondido'); });
+        const blocoVis = document.getElementById('blocoVisualizacaoBio');
+        const blocoEdi = document.getElementById('blocoEdicaoBio');
+        const campoEdi = document.getElementById('campoEdicaoBio');
+        const txtBio = document.getElementById('textoBio');
+        
+        document.getElementById('btnEditarBio').addEventListener('click', () => { 
+            if(!usuarioLogadoAtual) return;
+            let bd = JSON.parse(localStorage.getItem('bancoUsuarios')) || {};
+            campoEdi.value = bd[usuarioLogadoAtual].bio || bioPadrao; 
+            blocoVis.classList.add('escondido'); 
+            blocoEdi.classList.remove('escondido'); 
+        });
+        
+        document.getElementById('btnCancelarBio').addEventListener('click', () => { 
+            blocoEdi.classList.add('escondido'); 
+            blocoVis.classList.remove('escondido'); 
+        });
+        
+        document.getElementById('btnSalvarBio').addEventListener('click', () => { 
+            if(!usuarioLogadoAtual) return;
+            let bd = JSON.parse(localStorage.getItem('bancoUsuarios')) || {};
+            const txt = campoEdi.value; 
+            bd[usuarioLogadoAtual].bio = txt;
+            localStorage.setItem('bancoUsuarios', JSON.stringify(bd)); 
+            txtBio.innerHTML = txt.replace(/\n/g, '<br>'); 
+            blocoEdi.classList.add('escondido'); 
+            blocoVis.classList.remove('escondido'); 
+        });
 
         // Galeria de Fotos
-        const inputArq = document.getElementById('inputArquivo'), grade = document.getElementById('gradeFotos'), foto = document.getElementById('fotoPerfil');
+        const inputArq = document.getElementById('inputArquivo');
+        const grade = document.getElementById('gradeFotos');
+        const foto = document.getElementById('fotoPerfil');
         let fotos = JSON.parse(localStorage.getItem('galeriaFotos')) || [];
         foto.src = localStorage.getItem('fotoPerfilAtual') || 'boneca.png';
 
         function updatedGaleria() {
             grade.innerHTML = '';
             fotos.forEach(f => {
-                const item = document.createElement('div'); item.className = 'item-foto'; item.innerHTML = `<img src="${f}">`;
+                const item = document.createElement('div'); 
+                item.className = 'item-foto'; 
+                item.innerHTML = `<img src="${f}">`;
                 item.addEventListener('click', () => { foto.src = f; localStorage.setItem('fotoPerfilAtual', f); });
                 grade.appendChild(item);
             });
         }
+        
         inputArq.addEventListener('change', e => {
             const arq = e.target.files[0];
-            if(arq) { const rd = new FileReader(); rd.readAsDataURL(arq); rd.onload = ev => { fotos.push(ev.target.result); localStorage.setItem('galeriaFotos', JSON.stringify(fotos)); updatedGaleria(); } }
+            if(arq) { 
+                const rd = new FileReader(); 
+                rd.readAsDataURL(arq); 
+                rd.onload = ev => { 
+                    fotos.push(ev.target.result); 
+                    localStorage.setItem('galeriaFotos', JSON.stringify(fotos)); 
+                    updatedGaleria(); 
+                } 
+            }
         });
-        document.getElementById('btnLimpar').addEventListener('click', () => { localStorage.removeItem('galeriaFotos'); fotos = []; foto.src = 'boneca.png'; updatedGaleria(); });
+        
+        document.getElementById('btnLimpar').addEventListener('click', () => { 
+            localStorage.removeItem('galeriaFotos'); 
+            localStorage.removeItem('fotoPerfilAtual');
+            fotos = []; 
+            foto.src = 'boneca.png'; 
+            updatedGaleria(); 
+        });
+        
         updatedGaleria();
     </script>
 </body>
