@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tokking - Sistema Interativo</title>
-    
+   
     <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
 
+
     <style>
-        /* --- VARIÁVEIS DE TEMA (MODIFICÁVEIS VIA JS) --- */
+        /* --- VARIÁVEIS DE TEMA --- */
         :root {
             --cor-bg-body: #CBEBFA;
             --cor-janela-auth: linear-gradient(0deg, #FFFFFF 0%, #D3FFB0 100%);
@@ -17,12 +18,16 @@
             --cor-tag-ativa: linear-gradient(180deg, #FFAEE3 0%, #FFFFFF 100%);
         }
 
+
+        /* --- ESTILIZAÇÃO DO CURSOR --- */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: 'DotGothic16', sans-serif;
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><text y='18' font-size='16'>🐰</text></svg>"), auto;
         }
+
 
         body {
             background-color: var(--cor-bg-body);
@@ -31,23 +36,42 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
-            gap: 20px;
+            padding: 12px;
+            gap: 12px;
             overflow-x: hidden;
             transition: background-color 0.3s ease;
             position: relative;
         }
 
+
         .container-principal {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
             width: 100%;
             max-width: 480px;
         }
 
-        /* --- SISTEMA DE NOTIFICAÇÕES (POP-UP RETRÔ) --- */
+
+        /* --- PARTÍCULAS DA TRILHA DO MOUSE --- */
+        .particula-trilha {
+            position: fixed;
+            pointer-events: none;
+            font-size: 14px;
+            z-index: 10000;
+            user-select: none;
+            animation: quedaParticula 0.8s linear forwards;
+        }
+
+
+        @keyframes quedaParticula {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--mdx), 30px) scale(0.5); opacity: 0; }
+        }
+
+
+        /* --- NOTIFICAÇÕES --- */
         .banner-notificacao {
             position: fixed;
             top: -100px;
@@ -58,27 +82,27 @@
             background: linear-gradient(180deg, #FFFFFF 0%, #FFF5C3 100%);
             border: 2px solid #000000;
             border-radius: 12px;
-            padding: 12px 16px;
+            padding: 10px 14px;
             box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
             z-index: 9999;
             display: flex;
             align-items: center;
             gap: 12px;
-            cursor: pointer;
             transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .banner-notificacao.ativo { top: 20px; }
-        .banner-notificacao .icone { font-size: 24px; }
+        .banner-notificacao.ativo { top: 15px; }
+        .banner-notificacao .icone { font-size: 22px; }
         .banner-notificacao .conteudo { flex: 1; }
-        .banner-notificacao .titulo-notif { font-size: 13px; font-weight: bold; color: #ff3b93; }
-        .banner-notificacao .texto-notif { font-size: 12px; color: #000; }
+        .banner-notificacao .titulo-notif { font-size: 12px; font-weight: bold; color: #ff3b93; }
+        .banner-notificacao .texto-notif { font-size: 11px; color: #000; }
 
-        /* --- ABAS SUPERIORES DE NAVEGAÇÃO --- */
+
+        /* --- HEADER / ABAS SUPERIORES COMPACTAS --- */
         .tags-container {
             display: flex;
-            gap: 8px;
+            gap: 5px;
             background-color: #FFFFFF;
-            padding: 10px 12px;
+            padding: 6px 10px;
             border: 1px solid #000000;
             border-radius: 100px;
             width: 100%;
@@ -87,132 +111,151 @@
             box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
         }
 
+
         .tag-botao {
             border: 1px solid #000000;
             border-radius: 100px;
-            padding: 6px 14px;
-            font-size: 13px;
+            padding: 4px 10px;
+            font-size: 11px;
             color: #000000;
             text-decoration: none;
             background: #FFFFFF;
+            font-weight: bold;
             cursor: pointer;
-            user-select: none;
         }
+
 
         .tag-botao.ativa {
             background: var(--cor-tag-ativa);
-            font-weight: bold;
         }
 
-        /* --- ESTRUTURA FIXA DAS JANELAS --- */
+
+        /* --- JANELAS --- */
         .janela-fixa {
             border: 1px solid #000000;
             border-radius: 14px;
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             box-shadow: 4px 4px 0px rgba(0,0,0,0.1);
+            position: relative;
         }
+
 
         .janela-autenticacao { background: var(--cor-janela-auth); }
         .janela-player { background: var(--cor-janela-player); }
         .janela-perfil { background: var(--cor-janela-perfil); }
 
+
         .barra-superior {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
+            position: relative;
         }
+
 
         .titulo-phoning {
             background: linear-gradient(180deg, #CBEBFA 0%, #FFFFFF 100%);
             border: 1px solid #000000;
             border-radius: 100px;
-            padding: 4px 24px;
-            font-size: 14px;
+            padding: 3px 18px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
+
 
         .botoes-janela {
             display: flex;
-            gap: 6px;
+            gap: 4px;
         }
+
 
         .botao-controle {
             border: 1px solid #000000;
             background-color: #FFFFFF;
             border-radius: 4px;
-            width: 22px;
-            height: 22px;
+            width: 18px;
+            height: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: bold;
-            cursor: pointer;
         }
 
-        /* --- FORMULÁRIOS DE LOGIN / CADASTRO --- */
+
+        /* --- FORMULÁRIOS --- */
         .formulario-autenticacao {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            padding: 10px 5px;
+            padding: 5px;
         }
 
-        .titulo-auth { font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 8px; }
+
+        .titulo-auth { font-size: 15px; font-weight: bold; text-align: center; margin-bottom: 4px; }
         .campo-grupo { display: flex; flex-direction: column; gap: 4px; }
-        .campo-grupo label { font-size: 12px; font-weight: bold; }
-        .campo-grupo input { border: 1px solid #000000; border-radius: 6px; padding: 8px; font-size: 13px; outline: none; background-color: #FFFFFF; }
-        .botoes-auth-container { display: flex; gap: 10px; margin-top: 10px; }
-        .botao-auth { border: 1px solid #000000; border-radius: 100px; padding: 8px 16px; font-size: 13px; cursor: pointer; text-align: center; flex: 1; }
+        .campo-grupo label { font-size: 11px; font-weight: bold; }
+        .campo-grupo input { border: 1px solid #000000; border-radius: 6px; padding: 7px; font-size: 12px; outline: none; background-color: #FFFFFF; }
+        .botoes-auth-container { display: flex; gap: 10px; margin-top: 5px; }
+        .botao-auth { border: 1px solid #000000; border-radius: 100px; padding: 7px 14px; font-size: 12px; text-align: center; flex: 1; }
         .botao-auth.principal { background: linear-gradient(180deg, #FFAEE3 0%, #FFFFFF 100%); }
-        .texto-alternar { font-size: 12px; text-align: center; margin-top: 10px; cursor: pointer; text-decoration: underline; }
-        .aviso-erro { color: #ff0000; font-size: 12px; text-align: center; font-weight: bold; min-height: 15px; }
+        .texto-alternar { font-size: 11px; text-align: center; margin-top: 8px; text-decoration: underline; }
+        .aviso-erro { color: #ff0000; font-size: 11px; text-align: center; font-weight: bold; min-height: 14px; }
 
-        /* --- CAIXA DE LETRAS DO KARAOKÊ SIMULADO --- */
-        .container-letras-karaoke {
-            background-color: #000000;
+
+        /* --- PERFIL --- */
+        .conteudo-perfil { display: flex; gap: 14px; margin-bottom: 10px;}
+        .coluna-esquerda { width: 42%; display: flex; flex-direction: column; gap: 6px; align-items: center; }
+       
+        .container-foto-wrapper { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+       
+        .container-foto-corte {
+            background-color: #FFFFFF;
             border: 1px solid #000000;
-            border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 10px;
-            height: 75px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+            border-radius: 8px;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .linha-letra { font-size: 11px; color: #555555; transition: all 0.2s ease; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .linha-letra.foco { font-size: 13px; color: #00ffff; font-weight: bold; text-shadow: 0 0 4px #00ffff; }
-
-        /* --- ABA PERFIL --- */
-        .conteudo-perfil { display: flex; gap: 16px; margin-bottom: 12px;}
-        .coluna-esquerda { width: 42%; display: flex; flex-direction: column; gap: 8px; align-items: center; }
-        
-        .container-foto-wrapper { width: 100%; position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .container-foto-corte { background-color: #FFFFFF; border: 1px solid #000000; border-radius: 8px; width: 100%; aspect-ratio: 1 / 1; position: relative; overflow: hidden; cursor: grab; }
-        .container-foto-corte:active { cursor: grabbing; }
-        .foto-avatar-ajustavel { position: absolute; top: 0; left: 0; transform-origin: 0 0; user-select: none; -webkit-user-drag: none; }
-        .controle-zoom { width: 90%; margin-top: 2px; display: none; cursor: pointer; }
-        
-        .coluna-direita { width: 58%; display: flex; flex-direction: column; }
-        .timestamp { font-size: 12px; color: #555555; margin-bottom: 4px; min-height: 16px; }
-        .container-bio { position: relative; margin-bottom: 8px; }
-        .balao-texto { background-color: #FFFFFF; border: 1px solid #000000; border-radius: 6px; padding: 8px 12px; font-size: 13px; line-height: 1.4; color: #000000; word-wrap: break-word; }
-        
-        .botao-editar-bio { position: absolute; right: 5px; bottom: -10px; background: #FFAEE3; border: 1px solid #000; border-radius: 4px; font-size: 11px; padding: 2px 6px; cursor: pointer; display: none; z-index: 10; }
+        .foto-avatar-ajustavel {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: center center;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        .controle-zoom { width: 100%; margin-top: 2px; display: block; height: 6px; accent-color: #000; cursor: pointer;}
+       
+        .coluna-direita { width: 58%; display: flex; flex-direction: column; gap: 5px; }
+        .timestamp { font-size: 11px; color: #555555; min-height: 14px; }
+        .container-bio { position: relative; margin-bottom: 4px; }
+        .balao-texto { background-color: #FFFFFF; border: 1px solid #000000; border-radius: 6px; padding: 6px 10px; font-size: 12px; line-height: 1.4; color: #000000; word-wrap: break-word; }
+       
+        .botao-editar-bio { position: absolute; right: 5px; bottom: -10px; background: #FFAEE3; border: 1px solid #00; border-radius: 4px; font-size: 10px; padding: 1px 5px; display: none; z-index: 10; cursor: pointer; }
         .container-bio:hover .botao-editar-bio { display: block; }
-        .container-edicao-formulario { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
-        .textarea-bio-edicao { width: 100%; height: 55px; font-size: 13px; border: 1px solid #000; border-radius: 6px; padding: 6px; resize: none; font-family: inherit; }
+        .container-edicao-formulario { display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px; }
+        .textarea-bio-edicao { width: 100%; height: 55px; font-size: 12px; border: 1px solid #00; border-radius: 6px; padding: 6px; resize: none; font-family: inherit; }
         .botoes-bio-edicao { display: flex; gap: 5px; justify-content: flex-end; }
-        .btn-bio-acao { font-size: 11px; padding: 2px 8px; border: 1px solid #000; border-radius: 4px; cursor: pointer; }
+        .btn-bio-acao { font-size: 10px; padding: 2px 6px; border: 1px solid #00; border-radius: 4px; cursor: pointer; }
         .btn-bio-acao.salvar { background-color: #D3FFB0; }
         .btn-bio-acao.cancelar { background-color: #FFFFFF; }
-        
-        .upload-label { background: #f1f1f1; border: 1px solid #000; padding: 4px 12px; border-radius: 4px; font-size: 11px; cursor: pointer; text-align: center; }
+       
+        .upload-label { background: #f1f1f1; border: 1px solid #00; padding: 4px 12px; border-radius: 4px; font-size: 10px; text-align: center; cursor: pointer; }
         .upload-input { display: none; }
+
 
         /* --- SELETOR DE STATUS --- */
         .container-status {
@@ -220,60 +263,108 @@
             align-items: center;
             gap: 6px;
             background: #ffffff;
-            border: 1px solid #000;
+            border: 1px solid #00;
             border-radius: 6px;
-            padding: 4px 8px;
+            padding: 3px 6px;
             width: 100%;
             justify-content: center;
+            margin-bottom: 2px;
         }
         .indicador-status-bola {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            border: 1px solid #000;
+            border: 1px solid #00;
             background-color: #00ff00;
             transition: background-color 0.2s ease;
         }
         .seletor-status-dropdown {
-            font-size: 11px;
+            font-size: 10px;
             border: none;
             background: none;
             outline: none;
+            font-weight: bold;
             cursor: pointer;
+        }
+
+
+        /* --- PLAYLIST YOUTUBE PLAYER --- */
+        .container-video-embed {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            border: 1px solid #00;
+            border-radius: 6px;
+            overflow: hidden;
+            background: #00;
+            margin-bottom: 10px;
+        }
+        .container-video-embed iframe {
+            width: 100%;
+            height: 100%;
+        }
+        .menu-playlist {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .musica-wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+            border: 1px solid #00;
+            border-radius: 6px;
+            padding: 5px 8px;
+            cursor: pointer;
+        }
+        .musica-wrapper.ativa {
+            background: var(--cor-tag-ativa);
+        }
+        .musica-item {
+            font-size: 11px;
             font-weight: bold;
         }
+        .btn-fav {
+            background: none;
+            border: none;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
 
         /* --- PAINEL DE TEMAS --- */
         .painel-temas {
             background: #ffffff;
-            border: 1px solid #000;
+            border: 1px solid #00;
             border-radius: 6px;
-            padding: 6px;
-            margin-top: 6px;
+            padding: 5px;
+            margin-top: auto;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
             width: 100%;
         }
-        .titulo-temas { font-size: 11px; font-weight: bold; text-align: center; }
+        .titulo-temas { font-size: 10px; font-weight: bold; text-align: center; }
         .botoes-temas { display: flex; gap: 4px; justify-content: space-between; }
-        .btn-tema { font-size: 10px; padding: 3px 5px; border: 1px solid #000; border-radius: 4px; cursor: pointer; flex: 1; background: #fff; text-align: center;}
-        
+        .btn-tema { font-size: 9px; padding: 2px 4px; border: 1px solid #00; border-radius: 4px; flex: 1; background: #fff; text-align: center; cursor: pointer;}
+       
         /* --- CHAT BOX --- */
         .container-chat-sistema {
             border-top: 1px dashed #000000;
-            padding-top: 10px;
+            padding-top: 8px;
             margin-top: 6px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
         .feed-mensagens {
-            height: 110px;
+            height: 100px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             border: 1px solid #000000;
             border-radius: 6px;
             background: rgba(255,255,255,0.4);
@@ -281,34 +372,150 @@
         }
         .balao-msg {
             max-width: 85%;
-            padding: 6px 10px;
+            padding: 5px 8px;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 11px;
             line-height: 1.3;
             word-wrap: break-word;
-            border: 1px solid #000;
+            border: 1px solid #00;
         }
         .balao-msg.usuario { background-color: #CBEBFA; align-self: flex-end; border-bottom-right-radius: 2px; }
         .balao-msg.membro { background-color: #FFFFFF; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .autor-msg { font-weight: bold; font-size: 10px; margin-bottom: 2px; color: #444; }
+        .autor-msg { font-weight: bold; font-size: 9px; margin-bottom: 2px; color: #444; }
         .input-chat-linha { display: flex; gap: 6px; }
-        .input-txt-chat { flex: 1; border: 1px solid #000; border-radius: 6px; padding: 6px; font-size: 12px; outline: none; }
-        .btn-enviar-chat { border: 1px solid #000; background: #FFAEE3; border-radius: 6px; padding: 0 12px; font-size: 12px; cursor: pointer; }
+        .input-txt-chat { flex: 1; border: 1px solid #00; border-radius: 6px; padding: 5px; font-size: 11px; outline: none; }
+        .btn-enviar-chat { border: 1px solid #00; background: #FFAEE3; border-radius: 6px; padding: 0 10px; font-size: 11px; cursor: pointer; }
 
-        /* --- PLAYER & PLAYLIST --- */
-        .container-video-embed { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; border: 1px solid #000000; border-radius: 6px; overflow: hidden; background-color: #000; margin-bottom: 10px; }
-        .container-video-embed iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        .menu-playlist { display: flex; flex-direction: column; gap: 6px; background-color: #FFFFFF; border: 1px solid #000000; border-radius: 6px; padding: 8px; max-height: 160px; overflow-y: auto; }
-        .musica-wrapper { display: flex; align-items: center; gap: 6px; background-color: #f1f1f1; border: 1px solid #000000; border-radius: 4px; padding: 4px 8px; }
-        .musica-item { font-size: 12px; cursor: pointer; flex-grow: 1; text-align: left; user-select: none; }
-        .musica-wrapper:hover, .musica-wrapper.ativa { background-color: #CBEBFA; font-weight: bold; }
-        .btn-fav { background: none; border: none; cursor: pointer; font-size: 14px; user-select: none; padding: 0 4px; }
 
-        /* VISIBILIDADE GLOBAL */
+        /* --- GALERIA DE PHOTOCARDS --- */
+        .secao-gacha {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: #fff;
+            border: 1px solid #000;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 12px;
+            text-align: center;
+            gap: 6px;
+        }
+        .pacote-gacha-btn {
+            font-size: 34px;
+            background: linear-gradient(135deg, #FFAEE3, #FFF5C3);
+            border: 2px dashed #000;
+            border-radius: 12px;
+            width: 70px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 3px 3px 0px #000;
+            transition: transform 0.1s ease;
+        }
+        .pacote-gacha-btn:active {
+            transform: scale(0.95);
+        }
+        .grid-album-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            max-height: 260px;
+            overflow-y: auto;
+            padding: 4px;
+        }
+        .slot-card-album {
+            border: 1px solid #000;
+            border-radius: 8px;
+            background: #f0f0f0;
+            aspect-ratio: 2 / 3;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+        .slot-card-album.desbloqueado {
+            cursor: pointer;
+        }
+        .slot-card-album img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            filter: grayscale(100%) brightness(60%);
+            transition: filter 0.3s ease;
+        }
+        .slot-card-album.desbloqueado img {
+            filter: grayscale(0%) brightness(100%);
+        }
+        .tag-contador-repetido {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #000;
+            color: #fff;
+            font-size: 8px;
+            padding: 1px 4px;
+            border-radius: 100px;
+            font-weight: bold;
+            z-index: 5;
+            display: none;
+        }
+        .slot-card-album.desbloqueado .tag-contador-repetido {
+            display: block;
+        }
+        .nome-card-tag {
+            background: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            font-size: 8px;
+            text-align: center;
+            padding: 2px 0;
+            width: 100%;
+            z-index: 4;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+
+        /* --- OVERLAYS / INTERFACES DE VISUALIZAÇÃO --- */
+        .overlay-revelacao, .overlay-foto-completa {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            gap: 12px;
+            padding: 20px;
+        }
+        .card-revelado-anim, .card-completo-img {
+            max-width: 85%;
+            max-height: 70vh;
+            border: 3px solid #fff;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.5);
+            object-fit: contain;
+            animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popUp {
+            0% { transform: scale(0.6); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+
         .escondido { display: none !important; }
     </style>
 </head>
 <body>
+
 
     <div class="banner-notificacao" id="popupNotificacao">
         <div class="icone" id="popupIcone">🐰</div>
@@ -318,23 +525,33 @@
         </div>
     </div>
 
+
+    <div class="overlay-foto-completa escondido" id="telaFotoCompleta" onclick="fecharFotoCompleta()">
+        <img src="" id="imagemCardCompleto" class="card-completo-img">
+        <div style="color: #fff; font-size: 13px; font-weight: bold; background: #000; padding: 5px 14px; border-radius: 100px; border: 1px solid #fff;">Clique em qualquer lugar para fechar ✕</div>
+    </div>
+
+
     <div class="container-principal">
 
-        <div class="tags-container" id="abasSuperiores" style="display: none;">
-            <div class="tag-botao ativa" id="abaMvPlayer">NewHairNewTee</div>
+
+        <div class="tags-container" id="abasSuperiores">
+            <div class="tag-botao" id="abaMvPlayer">NewHairNewTee</div>
             <div class="tag-botao" id="abaFavs">❤️ Favs</div>
-            <div class="tag-botao" id="abaDataPerfil"><span>ツ</span> 2006</div>
-            <div class="tag-botao" id="btnPerfilSair">👤 Sair</div>
+            <div class="tag-botao" id="abaPhotocards">📂 Photocards</div>
+            <div class="tag-botao ativa" id="abaDataPerfil"><span>ツ</span> 2006</div>
+            <div class="tag-botao" id="btnPerfilSair">👤 Login/Sair</div>
         </div>
 
-        <div class="janela-fixa janela-autenticacao" id="janelaAuth">
+
+        <div class="janela-fixa janela-autenticacao escondido" id="janelaAuth">
             <div class="barra-superior">
                 <span class="titulo-phoning">@ tokking</span>
                 <div class="botoes-janela">
                     <span class="botao-controle">✕</span> <span class="botao-controle">─</span> <span class="botao-controle">⬜</span>
                 </div>
             </div>
-            
+           
             <div class="formulario-autenticacao" id="telaLogin">
                 <div class="titulo-auth">🔐 Log In 🔐</div>
                 <div id="msgErroLogin" class="aviso-erro"></div>
@@ -351,6 +568,7 @@
                 </div>
                 <div class="texto-alternar" id="irParaCadastro">Don't have an account? Sign Up</div>
             </div>
+
 
             <div class="formulario-autenticacao escondido" id="telaCadastro">
                 <div class="titulo-auth">✨ Create Account ✨</div>
@@ -370,6 +588,7 @@
             </div>
         </div>
 
+
         <div class="janela-fixa janela-player escondido" id="janelaMvPlayer">
             <div class="barra-superior">
                 <span class="titulo-phoning">📺 NewJeans Player</span>
@@ -380,15 +599,9 @@
             <div class="container-video-embed">
                 <iframe id="videoIframe" src="https://www.youtube.com/embed/js1CtxSY38I" title="NewJeans Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
             </div>
-
-            <div class="container-letras-karaoke">
-                <div class="linha-letra" id="letraPassada">...</div>
-                <div class="linha-letra foco" id="letraAtual">Select a song to load lyrics</div>
-                <div class="linha-letra" id="letraFutura">...</div>
-            </div>
-
             <div class="menu-playlist" id="listaPlaylistGeral"></div>
         </div>
+
 
         <div class="janela-fixa janela-player escondido" id="janelaFavs">
             <div class="barra-superior">
@@ -400,26 +613,56 @@
             <div class="menu-playlist" id="listaPlaylistFavs"></div>
         </div>
 
-        <div class="janela-fixa janela-perfil escondido" id="janelaPerfil2006">
+
+        <div class="janela-fixa janela-player escondido" id="janelaPhotocards">
+            <div class="barra-superior">
+                <span class="titulo-phoning">📂 Bunny Album</span>
+                <div class="botoes-janela">
+                    <span class="botao-controle">✕</span> <span class="botao-controle">─</span> <span class="botao-controle">⬜</span>
+                </div>
+            </div>
+           
+            <div class="overlay-revelacao escondido" id="telaRevelacaoCard" onclick="fecharRevelacaoCard()">
+                <img src="" id="imagemCardRevelado" class="card-revelado-anim">
+                <div style="color: #fff; font-size: 13px; font-weight: bold; background: #000; padding: 4px 12px; border-radius: 8px;">Você tirou esse Card! ✨</div>
+            </div>
+
+
+            <div class="secao-gacha">
+                <div style="font-size: 12px; font-weight: bold;">✨ Sorteio de Photocard Diário ✨</div>
+                <div class="pacote-gacha-btn" id="btnAbrirPacote">🛍️</div>
+                <div style="font-size: 10px; color: #555;">Clique no pacotinho para tirar um card!</div>
+            </div>
+
+
+            <div class="grid-album-cards" id="albumGridContainer"></div>
+        </div>
+
+
+        <div class="janela-fixa janela-perfil" id="janelaPerfil2006">
             <div class="barra-superior">
                 <span class="titulo-phoning">@ tokking</span>
                 <div class="botoes-janela">
                     <span class="botao-controle">✕</span> <span class="botao-controle">─</span> <span class="botao-controle">⬜</span>
                 </div>
             </div>
-            
+           
             <div class="conteudo-perfil">
                 <div class="coluna-esquerda">
-                    <div class="container-foto-wrapper">
+                    <div class="container-foto-wrapper escondido" id="wrapperGeralFotoPerfil">
                         <div class="container-foto-corte" id="areaCorteFoto">
-                            <img id="fotoPerfil" src="boneca.png" alt="Avatar" class="foto-avatar-ajustavel">
+                            <img id="fotoPerfil" src="" alt="Avatar" class="foto-avatar-ajustavel">
                         </div>
                         <input type="range" id="sliderZoom" class="controle-zoom" min="1" max="3" step="0.01" value="1">
                     </div>
-                    
-                    <label for="inputAvatar" class="upload-label" style="width: 100%; font-size: 11px; padding: 4px 0;">🔄 Mudar Ícone</label>
+                   
+                    <label for="inputAvatar" class="upload-label" style="width: 100%; font-size: 10px; padding: 4px 0;">🔄 Mudar Ícone</label>
                     <input type="file" id="inputAvatar" class="upload-input" accept="image/*">
-
+                </div>
+               
+                <div class="coluna-direita">
+                    <div class="timestamp" id="tempo-envio">Today at --:-- pm</div>
+                   
                     <div class="container-status">
                         <div class="indicador-status-bola" id="bolaStatus"></div>
                         <select class="seletor-status-dropdown" id="dropdownStatus">
@@ -429,23 +672,12 @@
                         </select>
                     </div>
 
-                    <div class="painel-temas">
-                        <div class="titulo-temas">🎨 Escolha o Tema</div>
-                        <div class="botoes-temas">
-                            <div class="btn-tema" onclick="mudarTema('tokking')">Tokking</div>
-                            <div class="btn-tema" onclick="mudarTema('shy')">Shy</div>
-                            <div class="btn-tema" onclick="mudarTema('cookie')">Cookie</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="coluna-direita">
-                    <div class="timestamp" id="tempo-envio">Today at --:-- pm</div>
-                    
+
                     <div class="container-bio" id="blocoVisualizacaoBio">
                         <div class="balao-texto" id="textoBio">Edite sua bio aqui!</div>
                         <button class="botao-editar-bio" id="btnEditarBio">✏️ Editar Bio</button>
                     </div>
+
 
                     <div class="container-edicao-formulario escondido" id="blocoEdicaoBio">
                         <textarea class="textarea-bio-edicao" id="campoEdicaoBio"></textarea>
@@ -455,10 +687,18 @@
                         </div>
                     </div>
 
-                    <div class="timestamp" id="tempo-atual">Today at --:-- pm</div>
-                    <div class="balao-texto">Você está conectado com sucesso no ambiente seguro.</div>
+
+                    <div class="painel-temas">
+                        <div class="titulo-temas">🎨 Escolha o Tema</div>
+                        <div class="botoes-temas">
+                            <div class="btn-tema" id="btnTemaTokking">Tokking</div>
+                            <div class="btn-tema" id="btnTemaShy">Shy</div>
+                            <div class="btn-tema" id="btnTemaCookie">Cookie</div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
 
             <div class="container-chat-sistema">
                 <div class="feed-mensagens" id="feedChat">
@@ -474,43 +714,24 @@
             </div>
         </div>
 
+
     </div>
 
-    <script>
-        let usuarioLogadoAtual = "";
-        const bioPadrao = "Edite sua bio aqui!\nAdicione algo fofo :3";
-        
-        let intervaloLetras = null;
-        let indiceLetraAtual = 0;
 
-        // --- BANCO DE LETRAS ATUALIZADO (VERSOS REAIS / ROMANIZADOS) ---
-        const bancoLetras = {
-            "m1": [
-                "You got me looking for attention", "Cheoreom neoegeman集中hae", 
-                "Drop the beat, make it move right now", "Deo meolli dadeul boge, attention!", 
-                "Ne gieogeul naneun sarajige hae", "A-t-t-e-n-t-i-o-n is what I need"
-            ],
-            "m2": [
-                "Baby, got me feeling like a hype boy", "Neoman wonhae, hype boy, oh!", 
-                "Take him to the sky, hype boy", "Naega bogo sipeun hype boy~", 
-                "And I know you want it too", "Cause you are my superstar!"
-            ],
-            "m3": [
-                "Made a little cookie", "Neoreul wonhaneun nae moseubi sweet", 
-                "Bet you want a bite of this cookie!", "Naega mandeun cookie, come and take it", 
-                "Siganbwa, chokchokhage mandeun cookie", "Cheoncheonhi nogadeureoga~"
-            ],
-            "m4": [
-                "Stay in the middle, like you do", "Woo, I don't want no riddle", 
-                "Malhae jwobwa, saenggagi nanni?", "Ditto! Naega baradeon dalkomhan...", 
-                "Ra-ta-ta-ta, nae simjangi boom!", "I got nothing to lose, stay with me"
-            ],
-            "m10": [
-                "We are the GODS of the game!", "Welcome to the grand final stage", 
-                "Hear the crowd screaming our names", "This is our world, our legacy", 
-                "NewJeans breaking rules again!", "Look at us, we are rising up"
-            ]
-        };
+    <script>
+        let usuarioLogadoAtual = "visitante";
+        const bioPadrao = "Edite sua bio aqui!\nAdicione algo fofo :3";
+
+
+        // BANCO DE DADOS DOS PHOTOCARDS
+        const bancoPhotocards = [
+            { id: "pc1", nome: "Hyein - Uniforme", arquivo: "Newjeans omg ditto hyein photocard high quality_.jpg" },
+            { id: "pc2", nome: "Danielle - Sorriso", arquivo: "☆.jpg" },
+            { id: "pc3", nome: "Minji - OMG Close", arquivo: "Newjeans - Minji on ‘OMG’ Photocards.jpg" },
+            { id: "pc4", nome: "Hyein - Perfil", arquivo: "transferir (3).jpg" },
+            { id: "pc5", nome: "Hanni", arquivo: "hanni ★ (1).jpg" },
+        ];
+
 
         const musicasBase = [
             { id: "m1", titulo: "Attention", url: "https://www.youtube.com/embed/js1CtxSY38I" },
@@ -520,6 +741,7 @@
             { id: "m10", titulo: "GODS (Worlds Live)", url: "https://www.youtube.com/embed/uiz7EsMPsuw" }
         ];
 
+
         const respostasMembros = [
             { nome: "Minji 🐻", msg: "Omg! That's so cool! I'm practicing choreography right now." },
             { nome: "Hanni 🐰", msg: "Did you listen to our new playlist today? Tell me your favorite song!" },
@@ -528,27 +750,32 @@
             { nome: "Hyein 🐹", msg: "Hello! Missing our bunnies so much today! Look at my profile icon!" }
         ];
 
+
         const eventosNotificacoes = [
             { icone: "🐰", titulo: "Hanni is active!", texto: "She just updated her playlist. Go check it!", aba: "mv" },
             { icone: "🐱", titulo: "New Chat Alert!", texto: "Haerin just sent a new message in the chat room!", aba: "perfil" },
-            { icone: "🐻", titulo: "Minji Live Notice!", texto: "Minji changed the system color theme! Check it out.", aba: "perfil" },
-            { icone: "⭐️", titulo: "Bunnies Zone", texto: "Check your favorite tracks list on the Favs tab!", aba: "favs" }
+            { icone: "🛍️", titulo: "Photocard Pack!", texto: "Seu pacotinho diário de Photocards está pronto para abrir!", aba: "cards" }
         ];
 
-        let imgAtiva = null; let zoomAtual = 1; let posX = 0; let posY = 0; let arrastando = false; let startX, startY;
 
+        let imgAtiva = null; let zoomAtual = 1; let posX = 0; let posY = 0; let arrastando = false; let startX, startY;
+       
         const fotoPerfil = document.getElementById('fotoPerfil');
         const areaCorte = document.getElementById('areaCorteFoto');
         const sliderZoom = document.getElementById('sliderZoom');
+        const wrapperGeralFotoPerfil = document.getElementById('wrapperGeralFotoPerfil');
         const janelaAuth = document.getElementById('janelaAuth');
         const telaCadastro = document.getElementById('telaCadastro');
         const telaLogin = document.getElementById('telaLogin');
         const abasSuperiores = document.getElementById('abasSuperiores');
         const janelaMvPlayer = document.getElementById('janelaMvPlayer');
         const janelaFavs = document.getElementById('janelaFavs');
+        const janelaPhotocards = document.getElementById('janelaPhotocards');
         const janelaPerfil2006 = document.getElementById('janelaPerfil2006');
+       
         const abaMvPlayer = document.getElementById('abaMvPlayer');
         const abaFavs = document.getElementById('abaFavs');
+        const abaPhotocards = document.getElementById('abaPhotocards');
         const abaDataPerfil = document.getElementById('abaDataPerfil');
         const videoIframe = document.getElementById('videoIframe');
         const msgErroLogin = document.getElementById('msgErroLogin');
@@ -557,80 +784,71 @@
         const dropdownStatus = document.getElementById('dropdownStatus');
         const popup = document.getElementById('popupNotificacao');
 
-        // --- SISTEMA DE LETRAS ---
-        function comecarLetrasMusica(idMusica) {
-            clearInterval(intervaloLetras);
-            const letras = bancoLetras[idMusica] || ["(Instrumental / No Lyrics Available)", "Enjoy the cute music vibes!", "Tokking Phoning App 2006"];
-            indiceLetraAtual = 0;
-            
-            function atualizarDisplayLetras() {
-                const anterior = letras[indiceLetraAtual - 1] || "...";
-                const atual = letras[indiceLetraAtual];
-                const proxima = letras[indiceLetraAtual + 1] || "...";
 
-                document.getElementById('letraPassada').innerText = anterior;
-                document.getElementById('letraAtual').innerText = atual;
-                document.getElementById('letraFutura').innerText = proxima;
+        // --- TRILHA DO MOUSE ---
+        const emojisTrilha = ['✨', '💖', '⭐', '🌈', '🐾'];
+        window.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.12) return;
+            const particula = document.createElement('div');
+            particula.className = 'particula-trilha';
+            particula.innerText = emojisTrilha[Math.floor(Math.random() * emojisTrilha.length)];
+            particula.style.left = e.clientX + 'px';
+            particula.style.top = e.clientY + 'px';
+            const mdx = (Math.random() * 60 - 30) + 'px';
+            particula.style.setProperty('--mdx', mdx);
+            document.body.appendChild(particula);
+            setTimeout(() => particula.remove(), 800);
+        });
 
-                indiceLetraAtual = (indiceLetraAtual + 1) % letras.length;
-            }
-            
-            atualizarDisplayLetras();
-            intervaloLetras = setInterval(atualizarDisplayLetras, 4000);
-        }
 
         // --- NOTIFICAÇÕES ---
         let abaDestinoPopup = "mv";
-        
         function dispararNotificacao() {
-            if (!usuarioLogadoAtual) return;
-            
             const evento = eventosNotificacoes[Math.floor(Math.random() * eventosNotificacoes.length)];
             document.getElementById('popupIcone').innerText = evento.icone;
             document.getElementById('popupTitulo').innerText = evento.titulo;
             document.getElementById('popupTexto').innerText = evento.texto;
             abaDestinoPopup = evento.aba;
-
             tocarSomRetro('notificacao');
             popup.classList.add('ativo');
-
             setTimeout(() => { popup.classList.remove('ativo'); }, 6000);
         }
+
 
         popup.addEventListener('click', () => {
             popup.classList.remove('ativo');
             tocarSomRetro('clique');
             desativarTodasAbas();
-            
             if (abaDestinoPopup === "mv") {
                 abaMvPlayer.classList.add('ativa'); janelaMvPlayer.classList.remove('escondido');
             } else if (abaDestinoPopup === "favs") {
                 abaFavs.classList.add('ativa'); janelaFavs.classList.remove('escondido'); renderizarFavs();
             } else if (abaDestinoPopup === "perfil") {
                 abaDataPerfil.classList.add('ativa'); janelaPerfil2006.classList.remove('escondido');
+            } else if (abaDestinoPopup === "cards") {
+                abaPhotocards.classList.add('ativa'); janelaPhotocards.classList.remove('escondido'); renderizarAlbum();
             }
         });
 
+
         setInterval(dispararNotificacao, 35000);
 
-        // --- STATUS ---
-        const coresStatus = { online: '#00ff00', ocupado: '#ff0000', ouvindo: '#00ccff' };
 
+        const coresStatus = { online: '#00ff00', ocupado: '#ff0000', ouvindo: '#00ccff' };
         dropdownStatus.addEventListener('change', (e) => {
             const novoStatus = e.target.value;
             bolaStatus.style.backgroundColor = coresStatus[novoStatus];
             tocarSomRetro('clique');
-            if (usuarioLogadoAtual) { localStorage.setItem(`status_${usuarioLogadoAtual}`, novoStatus); }
+            localStorage.setItem(`status_${usuarioLogadoAtual}`, novoStatus);
         });
 
-        // --- AUDIO RETRÔ (SFX) ---
+
         function tocarSomRetro(tipo) {
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const osc = audioCtx.createOscillator();
                 const ganho = audioCtx.createGain();
                 osc.connect(ganho); ganho.connect(audioCtx.destination);
-
                 if (tipo === 'clique') {
                     osc.type = 'square'; osc.frequency.setValueAtTime(600, audioCtx.currentTime);
                     osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.08);
@@ -655,7 +873,7 @@
             } catch (e) {}
         }
 
-        // --- TEMAS ---
+
         function mudarTema(nomeTema, salvar = true) {
             const r = document.documentElement;
             if (nomeTema === 'shy') {
@@ -677,24 +895,15 @@
                 r.style.setProperty('--cor-janela-perfil', 'linear-gradient(0deg, #FFFFFF 0%, #D3FFB0 100%)');
                 r.style.setProperty('--cor-tag-ativa', 'linear-gradient(180deg, #FFAEE3 0%, #FFFFFF 100%)');
             }
-            if(salvar && usuarioLogadoAtual) {
-                localStorage.setItem(`tema_${usuarioLogadoAtual}`, nomeTema);
-                tocarSomRetro('clique');
-            }
+            if(salvar) { localStorage.setItem(`tema_${usuarioLogadoAtual}`, nomeTema); tocarSomRetro('clique'); }
         }
 
-        function gerenciarBanco() {
-            try {
-                let bd = localStorage.getItem('bancoUsuarios');
-                if (!bd || bd.charAt(0) !== '{') {
-                    let contasPadrao = { "admin": { password: "1234", bio: bioPadrao } };
-                    localStorage.setItem('bancoUsuarios', JSON.stringify(contasPadrao));
-                }
-            } catch(e) {}
-        }
-        gerenciarBanco();
 
-        // --- RELÓGIOS ---
+        document.getElementById('btnTemaTokking').addEventListener('click', () => mudarTema('tokking'));
+        document.getElementById('btnTemaShy').addEventListener('click', () => mudarTema('shy'));
+        document.getElementById('btnTemaCookie').addEventListener('click', () => mudarTema('cookie'));
+
+
         function formatarHora() {
             const agora = new Date();
             let horas = agora.getHours(), minutos = agora.getMinutes();
@@ -703,27 +912,32 @@
             return `Today at ${horas < 10 ? '0' + horas : horas}:${minutos < 10 ? '0' + minutos : minutos} ${ampm}`;
         }
         function iniciarRelogios() {
-            if(document.getElementById('tempo-envio')) document.getElementById('tempo-envio').innerText = formatarHora();
-            if(document.getElementById('tempo-atual')) document.getElementById('tempo-atual').innerText = formatarHora();
+            const elEnvio = document.getElementById('tempo-envio');
+            if(elEnvio) elEnvio.innerText = formatarHora();
         }
 
-        // --- NAVEGAÇÃO ---
+
         function desativarTodasAbas() {
-            [abaMvPlayer, abaFavs, abaDataPerfil].forEach(b => b.classList.remove('ativa'));
-            [janelaMvPlayer, janelaFavs, janelaPerfil2006].forEach(j => j.classList.add('escondido'));
+            [abaMvPlayer, abaFavs, abaPhotocards, abaDataPerfil].forEach(b => b.classList.remove('ativa'));
+            [janelaMvPlayer, janelaFavs, janelaPhotocards, janelaPerfil2006, janelaAuth].forEach(j => j.classList.add('escondido'));
         }
+
 
         abaMvPlayer.addEventListener('click', () => { tocarSomRetro('clique'); desativarTodasAbas(); abaMvPlayer.classList.add('ativa'); janelaMvPlayer.classList.remove('escondido'); salvarEstadoFoto(); });
         abaFavs.addEventListener('click', () => { tocarSomRetro('clique'); desativarTodasAbas(); abaFavs.classList.add('ativa'); janelaFavs.classList.remove('escondido'); renderizarFavs(); salvarEstadoFoto(); });
+        abaPhotocards.addEventListener('click', () => { tocarSomRetro('clique'); desativarTodasAbas(); abaPhotocards.classList.add('ativa'); janelaPhotocards.classList.remove('escondido'); renderizarAlbum(); salvarEstadoFoto(); });
         abaDataPerfil.addEventListener('click', () => { tocarSomRetro('clique'); desativarTodasAbas(); abaDataPerfil.classList.add('ativa'); janelaPerfil2006.classList.remove('escondido'); });
 
+
+        document.getElementById('btnPerfilSair').addEventListener('click', () => { tocarSomRetro('clique'); desativarTodasAbas(); janelaAuth.classList.remove('escondido'); });
         document.getElementById('irParaLogin').addEventListener('click', () => { tocarSomRetro('clique'); telaCadastro.classList.add('escondido'); telaLogin.classList.remove('escondido'); });
         document.getElementById('irParaCadastro').addEventListener('click', () => { tocarSomRetro('clique'); telaLogin.classList.add('escondido'); telaCadastro.classList.remove('escondido'); });
 
-        // --- PLAYLIST & FAVORITOS ---
+
         function obtenerFavoritos() { return JSON.parse(localStorage.getItem(`favs_${usuarioLogadoAtual}`)) || []; }
 
-        function alternarFavorito(idMusica, e) {
+
+        window.alternarFavorito = function(idMusica, e) {
             e.stopPropagation(); tocarSomRetro('clique');
             let favs = obtenerFavoritos();
             if(favs.includes(idMusica)) favs = favs.filter(id => id !== idMusica);
@@ -732,15 +946,17 @@
             renderizarPlaylistGeral(); renderizarFavs();
         }
 
+
         function renderizarPlaylistGeral() {
             const container = document.getElementById('listaPlaylistGeral'); const favs = obtenerFavoritos(); container.innerHTML = "";
             musicasBase.forEach(m => {
                 const favoritado = favs.includes(m.id); const wrapper = document.createElement('div');
-                wrapper.className = `musica-wrapper`; wrapper.onclick = () => mudarMusica(m.url, m.id, wrapper);
+                wrapper.className = `musica-wrapper`; wrapper.onclick = () => mudarMusica(m.url, wrapper);
                 wrapper.innerHTML = `<div class="musica-item">${m.titulo}</div><button class="btn-fav" onclick="alternarFavorito('${m.id}', event)">${favoritado ? '❤️' : '🤍'}</button>`;
                 container.appendChild(wrapper);
             });
         }
+
 
         function renderizarFavs() {
             const container = document.getElementById('listaPlaylistFavs'); const favs = obtenerFavoritos(); container.innerHTML = "";
@@ -748,27 +964,109 @@
             if(musicasFiltradas.length === 0) { container.innerHTML = "<div style='font-size:12px; text-align:center; padding:10px; color:#666;'>Nenhum clipe favoritado ainda!</div>"; return; }
             musicasFiltradas.forEach(m => {
                 const wrapper = document.createElement('div'); wrapper.className = `musica-wrapper`;
-                wrapper.onclick = () => { videoIframe.src = m.url; comecarLetrasMusica(m.id); desativarTodasAbas(); abaMvPlayer.classList.add('ativa'); janelaMvPlayer.classList.remove('escondido'); };
+                wrapper.onclick = () => { videoIframe.src = m.url; desativarTodasAbas(); abaMvPlayer.classList.add('ativa'); janelaMvPlayer.classList.remove('escondido'); };
                 wrapper.innerHTML = `<div class="musica-item">${m.titulo}</div><button class="btn-fav" onclick="alternarFavorito('${m.id}', event)">❤️</button>`;
                 container.appendChild(wrapper);
             });
         }
 
-        function mudarMusica(url, idMusica, elemento) { 
-            videoIframe.src = url; comecarLetrasMusica(idMusica);
-            document.querySelectorAll('.musica-wrapper').forEach(btn => btn.classList.remove('ativa')); 
-            elemento.classList.add('ativa'); tocarSomRetro('clique'); 
+
+        function mudarMusica(url, elemento) {
+            videoIframe.src = url;
+            document.querySelectorAll('#listaPlaylistGeral .musica-wrapper').forEach(btn => btn.classList.remove('ativa'));
+            elemento.classList.add('ativa'); tocarSomRetro('clique');
         }
 
-        // --- INTERAÇÃO DE CHAT ---
+
+        // --- SISTEMA DE PHOTOCARDS (GACHA E ÁLBUM COM CONTROLE DE EXPANSÃO) ---
+        function obterColecaoCards() {
+            return JSON.parse(localStorage.getItem(`coleccion_cards_${usuarioLogadoAtual}`)) || {};
+        }
+
+
+        function salvarColecaoCards(colecao) {
+            localStorage.setItem(`coleccion_cards_${usuarioLogadoAtual}`, JSON.stringify(colecao));
+        }
+
+
+        function renderizarAlbum() {
+            const container = document.getElementById('albumGridContainer');
+            const colecao = obterColecaoCards();
+            container.innerHTML = "";
+
+
+            bancoPhotocards.forEach(card => {
+                const quantidade = colecao[card.id] || 0;
+                const slot = document.createElement('div');
+                slot.className = `slot-card-album ${quantidade > 0 ? 'desbloqueado' : ''}`;
+               
+                // Se já estiver desbloqueado, adiciona a função de abrir em tela cheia ao clicar
+                if(quantidade > 0) {
+                    slot.onclick = () => verCardCompleto(card.arquivo);
+                }
+
+
+                slot.innerHTML = `
+                    <span class="tag-contador-repetido">x${quantidade}</span>
+                    <img src="${card.arquivo}" alt="${card.nome}">
+                    <div class="nome-card-tag">${card.nome}</div>
+                `;
+                container.appendChild(slot);
+            });
+        }
+
+
+        document.getElementById('btnAbrirPacote').addEventListener('click', () => {
+            tocarSomRetro('sucesso');
+            const cardSorteado = bancoPhotocards[Math.floor(Math.random() * bancoPhotocards.length)];
+           
+            let colecao = obterColecaoCards();
+            colecao[cardSorteado.id] = (colecao[cardSorteado.id] || 0) + 1;
+            salvarColecaoCards(colecao);
+
+
+            const telaRevelacao = document.getElementById('telaRevelacaoCard');
+            const imgRevelada = document.getElementById('imagemCardRevelado');
+            imgRevelada.src = cardSorteado.arquivo;
+            telaRevelacao.classList.remove('escondido');
+           
+            renderizarAlbum();
+        });
+
+
+        window.fecharRevelacaoCard = function() {
+            tocarSomRetro('clique');
+            document.getElementById('telaRevelacaoCard').classList.add('escondido');
+        };
+
+
+        // FUNÇÕES PARA ABRIR E FECHAR A IMAGEM COMPLETA
+        window.verCardCompleto = function(caminhoArquivo) {
+            tocarSomRetro('sucesso');
+            const telaCompleta = document.getElementById('telaFotoCompleta');
+            const imgCompleta = document.getElementById('imagemCardCompleto');
+            imgCompleta.src = caminhoArquivo;
+            telaCompleta.classList.remove('escondido');
+        };
+
+
+        window.fecharFotoCompleta = function() {
+            tocarSomRetro('clique');
+            document.getElementById('telaFotoCompleta').classList.add('escondido');
+        };
+
+
+        // --- SISTEMA DO CHAT ---
         document.getElementById('btnEnviarChat').addEventListener('click', enviarMensagemUsuario);
         document.getElementById('inputTxtChat').addEventListener('keypress', (e) => { if(e.key === 'Enter') enviarMensagemUsuario(); });
+
 
         function enviarMensagemUsuario() {
             const input = document.getElementById('inputTxtChat'); const txt = input.value.trim(); if(!txt) return;
             tocarSomRetro('clique'); input.value = ""; const feed = document.getElementById('feedChat');
             const msgUser = document.createElement('div'); msgUser.className = 'balao-msg usuario'; msgUser.innerText = txt;
             feed.appendChild(msgUser); feed.scrollTop = feed.scrollHeight;
+
 
             setTimeout(() => {
                 const respostaAleatoria = respostasMembros[Math.floor(Math.random() * respostasMembros.length)];
@@ -778,11 +1076,11 @@
             }, 2000);
         }
 
-        // --- LOGIN E CADASTRO ---
+
         document.getElementById('btnRegistrar').addEventListener('click', () => {
             const user = document.getElementById('cadUser').value.trim(); const pass = document.getElementById('cadPass').value.trim();
             if (!user || !pass) { tocarSomRetro('erro'); msgErroCadastro.innerText = "Campos vazios!"; return; }
-            let banco = JSON.parse(localStorage.getItem('bancoUsuarios'));
+            let banco = JSON.parse(localStorage.getItem('bancoUsuarios')) || {};
             if (banco[user]) { tocarSomRetro('erro'); msgErroCadastro.innerText = "Usuário existente!"; return; }
             banco[user] = { password: pass, bio: bioPadrao };
             localStorage.setItem('bancoUsuarios', JSON.stringify(banco));
@@ -790,93 +1088,72 @@
             telaCadastro.classList.add('escondido'); telaLogin.classList.remove('escondido');
         });
 
+
         document.getElementById('btnLogar').addEventListener('click', () => {
             const user = document.getElementById('loginUser').value.trim(); const pass = document.getElementById('loginPass').value.trim();
             msgErroLogin.innerText = "";
             if (!user || !pass) { tocarSomRetro('erro'); msgErroLogin.innerText = "Preencha os campos!"; return; }
-            if (user === "admin" && pass === "1234") { executarLoginSucesso("admin", bioPadrao); return; }
             let banco = JSON.parse(localStorage.getItem('bancoUsuarios')) || {};
-            if (banco[user] && banco[user].password === pass) { executarLoginSucesso(user, banco[user].bio || bioPadrao); } 
+            if (banco[user] && banco[user].password === pass) { executingLoginSucesso(user, banco[user].bio || bioPadrao); }
             else { tocarSomRetro('erro'); msgErroLogin.innerText = "Usuário ou senha incorretos!"; }
         });
 
-        function executarLoginSucesso(usuario, textoBio) {
+
+        function executingLoginSucesso(usuario, textoBio) {
             usuarioLogadoAtual = usuario; tocarSomRetro('sucesso');
             let bd = JSON.parse(localStorage.getItem('bancoUsuarios')) || {};
             let bioSalva = bd[usuario] ? (bd[usuario].bio || bioPadrao) : bioPadrao;
             document.getElementById('textoBio').innerHTML = bioSalva.replace(/\n/g, '<br>');
-            
+           
             mudarTema(localStorage.getItem(`tema_${usuarioLogadoAtual}`) || 'tokking', false);
+            carregarDadosUsuario();
+            desativarTodasAbas(); abaDataPerfil.classList.add('ativa'); janelaPerfil2006.classList.remove('escondido');
+        }
 
+
+        function carregarDadosUsuario() {
             const statusSalvo = localStorage.getItem(`status_${usuarioLogadoAtual}`) || 'online';
             dropdownStatus.value = statusSalvo; bolaStatus.style.backgroundColor = coresStatus[statusSalvo];
 
-            janelaAuth.classList.add('escondido'); abasSuperiores.style.display = 'flex';
-            desativarTodasAbas(); abaMvPlayer.classList.add('ativa'); janelaMvPlayer.classList.remove('escondido');
-            renderizarPlaylistGeral();
-            
-            comecarLetrasMusica("m1");
 
+            renderizarPlaylistGeral();
+            renderizarAlbum();
+            resetarAjustes();
             const avatarFinal = localStorage.getItem(`avatar_${usuarioLogadoAtual}`);
             const fotoOriginal = localStorage.getItem(`avatar_original_${usuarioLogadoAtual}`);
+           
             if (fotoOriginal) {
                 imgAtiva = fotoOriginal; fotoPerfil.src = fotoOriginal;
+                wrapperGeralFotoPerfil.classList.remove('escondido');
                 const ajusteSalvo = localStorage.getItem(`ajuste_avatar_${usuarioLogadoAtual}`);
                 fotoPerfil.onload = () => {
-                    configurarImagemParaAjuste();
                     if (ajusteSalvo) {
-                        setTimeout(() => {
-                            const adj = JSON.parse(ajusteSalvo); zoomAtual = adj.zoom; posX = adj.x; posY = adj.y;
-                            sliderZoom.value = zoomAtual; atualizarTransform();
-                        }, 50);
+                        const adj = JSON.parse(ajusteSalvo); zoomAtual = adj.zoom; posX = adj.x; posY = adj.y;
+                        sliderZoom.value = zoomAtual; atualizarTransform();
                     }
                     fotoPerfil.onload = null;
                 };
             } else {
-                fotoPerfil.src = avatarFinal || 'boneca.png';
-                if(!avatarFinal) { fotoPerfil.style.width = '100%'; fotoPerfil.style.height = '100%'; sliderZoom.style.display = 'none'; }
+                fotoPerfil.src = "";
+                wrapperGeralFotoPerfil.classList.add('escondido');
             }
-            iniciarRelogios();
-            setTimeout(dispararNotificacao, 5000);
         }
 
-        document.getElementById('btnPerfilSair').addEventListener('click', () => {
-            tocarSomRetro('clique'); salvarEstadoFoto(); usuarioLogadoAtual = "";
-            clearInterval(intervaloLetras);
-            desativarTodasAbas(); abasSuperiores.style.display = 'none';
-            document.getElementById('loginUser').value = ""; document.getElementById('loginPass').value = "";
-            janelaAuth.classList.remove('escondido');
-            mudarTema('tokking', false); resetarAjustes(); videoIframe.src = musicasBase[0].url;
-            popup.classList.remove('ativo');
-        });
 
-        // --- FOTO ADJUST ---
-        function resetarAjustes() { zoomAtual = 1; posX = 0; posY = 0; if (sliderZoom) sliderZoom.value = 1; atualizarTransform(); }
-        function atualizarTransform() { if (fotoPerfil) fotoPerfil.style.transform = `translate(${posX}px, ${posY}px) scale(${zoomAtual})`; }
+        // --- AJUSTES DO AVATAR ---
+        function resetarAjustes() { zoomAtual = 1; posX = 0; posY = 0; sliderZoom.value = 1; atualizarTransform(); }
+        function atualizarTransform() { fotoPerfil.style.transform = `translate(${posX}px, ${posY}px) scale(${zoomAtual})`; }
+       
         function limitarArrasto() {
             const areaRect = areaCorte.getBoundingClientRect(); const imgRect = fotoPerfil.getBoundingClientRect();
-            const bRight = 0, bLeft = areaRect.width - imgRect.width, bBottom = 0, bTop = areaRect.height - imgRect.height;
+            const bRight = (imgRect.width - areaRect.width) / 2; const bLeft = -bRight;
+            const bBottom = (imgRect.height - areaRect.height) / 2; const bTop = -bBottom;
             if (posX > bRight) posX = bRight; if (posX < bLeft) posX = bLeft; if (posY > bBottom) posY = bBottom; if (posY < bTop) posY = bTop;
         }
 
-        function configurarImagemParaAjuste() {
-            if (!fotoPerfil.complete) return;
-            areaCorte.style.display = 'block'; sliderZoom.style.display = 'block';
-            const areaRect = areaCorte.getBoundingClientRect();
-            if (fotoPerfil.naturalWidth / fotoPerfil.naturalHeight > areaRect.width / areaRect.height) {
-                fotoPerfil.style.height = '100%'; fotoPerfil.style.width = 'auto';
-            } else {
-                fotoPerfil.style.width = '100%'; fotoPerfil.style.height = 'auto';
-            }
-            setTimeout(() => {
-                const finalRect = fotoPerfil.getBoundingClientRect();
-                posX = (areaRect.width - finalRect.width) / 2; posY = (areaRect.height - finalRect.height) / 2;
-                atualizarTransform();
-            }, 10);
-        }
 
         function salvarEstadoFoto() {
-            if (!usuarioLogadoAtual || !imgAtiva) return;
+            if (!imgAtiva) return;
             localStorage.setItem(`ajuste_avatar_${usuarioLogadoAtual}`, JSON.stringify({ zoom: zoomAtual, x: posX, y: posY }));
             const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d'); canvas.width = 180; canvas.height = 180;
             const areaRect = areaCorte.getBoundingClientRect(); const imgRect = fotoPerfil.getBoundingClientRect();
@@ -885,38 +1162,36 @@
             localStorage.setItem(`avatar_${usuarioLogadoAtual}`, canvas.toDataURL('image/jpeg', 0.7));
         }
 
+
         areaCorte.addEventListener('mousedown', e => { if (!imgAtiva) return; arrastando = true; startX = e.clientX - posX; startY = e.clientY - posY; e.preventDefault(); });
         window.addEventListener('mousemove', e => { if (!arrastando) return; posX = e.clientX - startX; posY = e.clientY - startY; limitarArrasto(); atualizarTransform(); });
         window.addEventListener('mouseup', () => arrastando = false);
-        
-        sliderZoom.addEventListener('input', e => {
-            if (!imgAtiva) return;
-            const areaRect = areaCorte.getBoundingClientRect(); const cX = areaRect.width / 2, cY = areaRect.height / 2;
-            const xR = (cX - posX) / zoomAtual, yR = (cY - posY) / zoomAtual;
-            zoomAtual = parseFloat(e.target.value); posX = cX - xR * zoomAtual; posY = cY - yR * zoomAtual;
-            limitarArrasto(); atualizarTransform();
-        });
+        sliderZoom.addEventListener('input', e => { if (!imgAtiva) return; zoomAtual = parseFloat(e.target.value); limitarArrasto(); atualizarTransform(); });
+
 
         document.getElementById('inputAvatar').addEventListener('change', e => {
             const arq = e.target.files[0];
-            if(arq && usuarioLogadoAtual) {
+            if(arq) {
                 const leitor = new FileReader();
                 leitor.onload = (ev) => {
                     imgAtiva = ev.target.result; fotoPerfil.src = ev.target.result;
                     localStorage.setItem(`avatar_original_${usuarioLogadoAtual}`, ev.target.result);
+                    wrapperGeralFotoPerfil.classList.remove('escondido');
                     resetarAjustes();
-                    fotoPerfil.onload = () => { configurarImagemParaAjuste(); fotoPerfil.onload = null; };
                 };
                 leitor.readAsDataURL(arq);
             }
         });
 
-        // Form Bio
+
         const blocoVis = document.getElementById('blocoVisualizacaoBio'); const blocoEdi = document.getElementById('blocoEdicaoBio'); const campoEdi = document.getElementById('campoEdicaoBio');
-        document.getElementById('btnEditarBio').addEventListener('click', () => { tocarSomRetro('clique'); let bd = JSON.parse(localStorage.getItem('bancoUsuarios')) || {}; campoEdi.value = bd[usuarioLogadoAtual] ? bd[usuarioLogadoAtual].bio : bioPadrao; blocoVis.classList.add('escondido'); blocoEdi.classList.remove('escondido'); });
+        document.getElementById('btnEditarBio').addEventListener('click', () => { tocarSomRetro('clique'); let bd = JSON.parse(localStorage.getItem('bancoUsuarios')) || {}; campoEdi.value = bd[usuarioLogadoAtual] ? (bd[usuarioLogadoAtual].bio || bioPadrao) : bioPadrao; blocoVis.className = 'escondido'; blocoEdi.classList.remove('escondido'); });
         document.getElementById('btnCancelarBio').addEventListener('click', () => { tocarSomRetro('clique'); blocoEdi.classList.add('escondido'); blocoVis.classList.remove('escondido'); });
         document.getElementById('btnSalvarBio').addEventListener('click', () => { tocarSomRetro('sucesso'); let bd = JSON.parse(localStorage.getItem('bancoUsuarios')) || {}; const txt = campoEdi.value; if(!bd[usuarioLogadoAtual]) bd[usuarioLogadoAtual] = {}; bd[usuarioLogadoAtual].bio = txt; localStorage.setItem('bancoUsuarios', JSON.stringify(bd)); document.getElementById('textoBio').innerHTML = txt.replace(/\n/g, '<br>'); blocoEdi.classList.add('escondido'); blocoVis.classList.remove('escondido'); });
 
+
+        carregarDadosUsuario();
+        iniciarRelogios();
         setInterval(iniciarRelogios, 20000);
     </script>
 </body>
